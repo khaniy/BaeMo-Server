@@ -1,0 +1,12 @@
+FROM openjdk:17
+CMD ["./mvnw", "clean", "package"]
+
+WORKDIR /app/src
+
+ARG JAR_FILE_PATH=build/libs/*-SNAPSHOT.jar
+
+COPY ${JAR_FILE_PATH} app.jar
+
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev","-jar", "app.jar"]
+
+EXPOSE 8080 8000
