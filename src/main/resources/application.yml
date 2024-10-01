@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    group:
+      local:
+        - console-logging
+      dev:
+        - console-logging
+        - dev-loki-logging
+      prod:
+        - console-logging
+        - prod-loki-logging
+    active: local
+
+  config:
+    import:
+      - classpath:config/monitoring/metric/actuator.yml
+#      - classpath:config/jwt/jwt.yml
+      - classpath:config/oauth2/oauth2.yml
+      - classpath:config/nhn/NHN-cloud.yml
+      - classpath:config/sms/naver-cloud-sms.yml
+      - classpath:config/aws/aws-config.yml
+
+

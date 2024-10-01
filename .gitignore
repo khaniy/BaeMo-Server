@@ -7,7 +7,7 @@ src/main/resources/config/firebase/
 src/main/resources/config/jwt/*
 resources/config/firebase/baemo-firebase-adminsdk.json
 
-HELP.md
+README.md
 .gradle
 /src/main/resources/config/secrets/*
 build/
