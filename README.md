@@ -1,6 +1,23 @@
 # 배드민턴의 모든 것, 배모 (공개용 소스)
+<img width="1500" alt="Notion Background" src="https://github.com/user-attachments/assets/47d2dfd3-4aea-4aff-b060-b0b6a95afaac">
 
-### 2024.03 ~ (운영 중)
+### 2024.05 ~ (운영 중)
+[![wakatime](https://wakatime.com/badge/user/caffd801-1520-47d7-b0c3-23c67218eeb2/project/4c1da88d-c714-4fdd-b10c-4d4f561c207d.svg)](https://wakatime.com/badge/user/caffd801-1520-47d7-b0c3-23c67218eeb2/project/4c1da88d-c714-4fdd-b10c-4d4f561c207d)
+
+<object>
+  <a href="https://apps.apple.com/kr/app/%EB%B0%B0%EB%AA%A8-%EB%B0%B0%EB%93%9C%EB%AF%BC%ED%84%B4%EC%9D%98-%EB%AA%A8%EB%93%A0-%EA%B2%83/id6664070567">
+    <img src="https://img.shields.io/badge/App Store-0D96F6?style=for-the-badge&logo=app store&logoColor=white" alt="App Store">
+  </a>
+</object>
+
+<br>
+<object>
+  <a href="https://apps.apple.com/kr/app/%EB%B0%B0%EB%AA%A8-%EB%B0%B0%EB%93%9C%EB%AF%BC%ED%84%B4%EC%9D%98-%EB%AA%A8%EB%93%A0-%EA%B2%83/id6664070567">
+    <img src="https://img.shields.io/badge/Play Store-414141?style=for-the-badge&logo=google play&logoColor=white" alt="Play Store">
+  </a>
+</object>
+<br>
+(Play Store 출시 예정)
 
 ## 배드민턴의 모든 것, 배모
 배모는 다음과 같은 목표🏅를 가지고 있습니다.
@@ -15,7 +32,7 @@
 
 대한민국 1등 배드민턴 플랫폼이 될때까지!
 
-### 주요 기능
+### Features
 - 모임 관리
 - 운동 관리
 - 게임 관리
@@ -24,22 +41,14 @@
 - 커뮤니티(곧 출시 예정)
 - 대회 운영 및 홍보, 대회 참가 신청(출시 예정)
 
-### 기술 스택
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white">
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
-<img src="https://img.shields.io/badge/JPA-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
-<img src="https://img.shields.io/badge/QueryDSL-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
+![Section 1](https://github.com/user-attachments/assets/64e7d104-961e-414e-8538-347ddafe5b89)
 
-<br>
-<br>
-<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=PostgreSQL&logoColor=white">
-<img src="https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=Flyway&logoColor=white">
-<img src="https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=Redis&logoColor=white">
-<img src="https://img.shields.io/badge/Kafka-506365?style=for-the-badge&logo=Apache Kafka&logoColor=white">
-<br>
-<br>
-<img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=Kubernetes&logoColor=white">
-<img src="https://img.shields.io/badge/Argo-EF7B4D?style=for-the-badge&logo=Argo&logoColor=white">
-<img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white">
-<img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white">
-<br>
+### Tech Stack
+#### Application
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=SpringBoot&logoColor=white"> <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat&logo=Spring Security&logoColor=white"> <img src="https://img.shields.io/badge/JPA-6DB33F?style=flat&logo=Spring&logoColor=white"> <img src="https://img.shields.io/badge/QueryDSL-6DB33F?style=flat&logo=Spring&logoColor=white">
+
+#### Data
+<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=PostgreSQL&logoColor=white"> <img src="https://img.shields.io/badge/Flyway-CC0200?style=flat&logo=Flyway&logoColor=white"> <img src="https://img.shields.io/badge/Redis-FF4438?style=flat&logo=Redis&logoColor=white"> <img src="https://img.shields.io/badge/Kafka-506365?style=flat&logo=Apache Kafka&logoColor=white">
+
+#### Ops
+<img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat&logo=Kubernetes&logoColor=white"> <img src="https://img.shields.io/badge/Argo-EF7B4D?style=flat&logo=Argo&logoColor=white"> <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&logoColor=white"> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&logoColor=white">
