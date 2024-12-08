@@ -18,9 +18,11 @@ import hotil.baemo.domains.chat.domain.value.room.ChatRoomType;
 import hotil.baemo.domains.chat.domain.value.club.ClubId;
 import hotil.baemo.domains.chat.domain.value.user.UserId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 //TODO UpdateClubChatUseCase 추가해야함 -> 모임 채팅 kafkaDTO 없어서 보류
 public class CommandClubChatInputPort implements CreateClubChatUseCase,UpdateClubChatUseCase,
 	DeleteClubChatUseCase {

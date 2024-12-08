@@ -27,4 +27,9 @@ public class RelationExternalAdapter implements RelationExternalOutPort {
     public List<QRelationDTO.FindFriends> findFriend(UserId userId, UserCode userCode) {
         return relationExternalQuery.getUserByUserCode(userId.id(), userCode.code());
     }
+
+    @Override
+    public List<QRelationDTO.ApplyFriendsListView> getApplyFriends(UserId userId) {
+        return relationExternalQuery.getApplyFriends(userId.id());
+    }
 }

@@ -44,6 +44,7 @@ public enum ResponseCode {
     COMMUNITY_NOT_FOUND_STATS("COMMUNITY-04", NOT_FOUND, "해당 게시글의 상태 정보를 찾을 수 없습니다."),
     COMMUNITY_TOO_MUCH_THUMBNAIL("COMMUNITY-05", TOO_MANY_REQUESTS, "게시글의 대표 이미지는 1장만 가능합니다."),
     COMMUNITY_CATEGORY_NOT_FOUND("COMMUNITY-06", NOT_FOUND, "게시글의 카테고리를 찾을 수 없습니다."),
+    COMMUNITY_LIKE_OWN("COMMUNITY-07", BAD_REQUEST, "본인 글은 좋아요를 할 수 없습니다."),
 
     // Exercise
     CLUB_ROLE_AUTH_FAILED("EXERCISE-01", BAD_REQUEST, "클럽 운동 관련 권한이 제한된 경우"),
@@ -73,10 +74,10 @@ public enum ResponseCode {
 
     EXCEED_GUEST_LIMIT("EXERCISE-11", BAD_REQUEST, "게스트 제한을 넘어 섰습니다."),
     NOT_ALLOWED_DELETE_EXERCISE("EXERCISE-11", BAD_REQUEST, "운동이 모집 중 상태일 때만 삭제 할 수 있습니다."),
-    NOT_ALLOWED_UPDATE_EXERCISE("EXERCISE-11", BAD_REQUEST, "운동이 모집 중 상태일 때만 수정 할 수 있습니다."),
+    NOT_ALLOWED_UPDATE_EXERCISE("EXERCISE-11", BAD_REQUEST, "운동이 완료 상태일 때는 수정 할 수 없습니다."),
     NOT_ALLOWED_CREATE_EXERCISE_USER("EXERCISE-11", BAD_REQUEST, "운동이 모집 중 상태일 때만 참가 할 수 있습니다."),
     NOT_ALLOWED_UPDATE_EXERCISE_USER("EXERCISE-11", BAD_REQUEST, "운동이 진행 중이거나 완료일때는 할 수 없습니다."),
-    NOT_ALLOWED_DELETE_EXERCISE_USER("EXERCISE-11", BAD_REQUEST, "운동이 모집 중 상태일 때만 탈퇴 할 수 있습니다."),
+    NOT_ALLOWED_DELETE_EXERCISE_USER("EXERCISE-11", BAD_REQUEST, "운동이 모집 중일 때만 탈퇴 할 수 있습니다."),
 
 
     UNACCEPTABLE_GUEST_LIMIT("EXERCISE-11", BAD_REQUEST, "수정한 게스트 제한이 이미 참가한 게스트 수보다 적습니다."),
@@ -95,6 +96,10 @@ public enum ResponseCode {
     MATCH_USER_ERROR("MATCH-02", BAD_REQUEST, "게임 유저가 4명이 아닌 경우"),
     MATCH_SCORE_ERROR("MATCH-03", BAD_REQUEST, "스코어가 0점 이하 혹은 31점 이상인 경우"),
     NOT_ALLOWED_UPDATE_HISTORY_MATCH("MATCH-04", BAD_REQUEST, "전적은 상태 변경이 불가합니다."),
+    NOT_ALLOWED_UPDATE_PROGRESS_MATCH("MATCH-04",BAD_REQUEST ,"진행 중인 게임은 완료 & 다음 상태로만 변경가능합니다." ),
+    NOT_ALLOWED_UPDATE_NEXT_MATCH("MATCH-04",BAD_REQUEST , "다음 게임은 대기 & 진행 상태로만 변경가능합니다." ),
+    NOT_ALLOWED_UPDATE_WAITING_MATCH("MATCH-04",BAD_REQUEST , "대기 중인 게임은 완료 & 다음 상태로만 변경가능합니다." ),
+    NOT_ALLOWED_UPDATE_COMPLETE_MATCH("MATCH-04",BAD_REQUEST , "완료된 게임은 대기 상태로만 변경가능합니다." ),
     MATCH_IS_NOT_DELETABLE("MATCH-04", BAD_REQUEST, "게임 삭제는 '대기', '다음' 일때만 가능합니다."),
     NOW_ALLOWED_UPDATE_MATCH_STATUS("MATCH-04", BAD_REQUEST, "게임 상태 변경은 운동이 진행일 때만 가능합니다."),
     NOW_ALLOWED_UPDATE_MATCH("MATCH-04", BAD_REQUEST, "진행 중이거나 완료 상태 게임은 수정할 수 없습니다."),
@@ -116,8 +121,10 @@ public enum ResponseCode {
 
     // CLUBS
     CLUBS_ALREADY_MEMBER("CLUBS-01", BAD_REQUEST, "이미 가입한 모임입니다."),
+    CLUBS_ALREADY_APPLIED("CLUBS-01", BAD_REQUEST, "이미 신청한 모임입니다."),
     CLUBS_ROLE_RESTRICTED("CLUBS-01", BAD_REQUEST, "권한이 없습니다."),
     CLUBS_NOT_FOUND_MEMBER("CLUBS-02", NOT_FOUND, "해당 멤버를 찾을 수 없습니다."),
+    CLUBS_NOT_FOUND_APPLIED_MEMBER("CLUBS-01", BAD_REQUEST, "모임에 신청한 유저를 찾을 수 없습니다."),
     CLUBS_NOT_FOUND("CLUBS-03", NOT_FOUND, "해당 모임을 찾을 수 없습니다."),
     CLUBS_ROLE_CHANGE_NOT_ALLOWED("CLUBS-04", CONFLICT, "같은 권한으로 변경할 수 없습니다."),
 
@@ -149,9 +156,9 @@ public enum ResponseCode {
 
 
     // ERROR
-    CRITIC_ERROR("ERROR-01", INTERNAL_SERVER_ERROR, "서버에 예상치 못한 에러가 발생한 경우"),
-    DB_ERROR("ERROR-02", INTERNAL_SERVER_ERROR, "데이터 베이스 통신이 안될 때"),
-    ETC_ERROR("ERROR-03", INTERNAL_SERVER_ERROR, "서버에 문제가 발생했습니다. 신속히 해결하겠습니다."),
+    CRITIC_ERROR("ERROR-01", INTERNAL_SERVER_ERROR, "서버에 문제가 발생했습니다."),
+    DB_ERROR("ERROR-02", INTERNAL_SERVER_ERROR, "서버에 문제가 발생했습니다."),
+    ETC_ERROR("ERROR-03", INTERNAL_SERVER_ERROR, "서버에 문제가 발생했습니다."),
     QUERYDSL_ERROR("ERROR-04", INTERNAL_SERVER_ERROR, "QueryDsl 에러가 발생했습니다."),
     COOKIE_ERROR("ERROR-05", INTERNAL_SERVER_ERROR, "Response Cookie 에러가 발생했습니다."),
     INVALID_URL("ERROR-08", INTERNAL_SERVER_ERROR, "잘못된 경로 요청입니다."),
@@ -166,8 +173,9 @@ public enum ResponseCode {
     UNAVAILABLE_PHONE_NUMBER("PHONE-01", BAD_REQUEST, "올바르지 않은 핸드폰 번호 입니다. 통신사에 등록된 핸드폰 번호를 사용해주세요."),
     DEVICE_NOT_FOUND("DEVICE-01",BAD_REQUEST ,"등록된 기기가 없습니다." ),
       
-    //
-    ;
+    EXERCISE_COURT_NOT_FOUND("EXERCISE",BAD_REQUEST ,"코트를 찾을 수 없습니다. 다시 시도해주세요." ),
+    EXERCISE_COURT_DUPLICATED("EXERCISE",BAD_REQUEST ,"중복된 코트가 있습니다. 다시 시도해주세요." ),
+    EXERCISE_COURT_NOT_DELETED("EXERCISE",BAD_REQUEST ,"진행 중인 게임이 있는 코트는 삭제할 수 없습니다. 다시 시도해주세요." );
 
     private final String code;
     private final HttpStatus httpStatus;

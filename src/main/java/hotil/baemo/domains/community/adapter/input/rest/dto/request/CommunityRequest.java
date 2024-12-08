@@ -16,13 +16,13 @@ import java.util.List;
 public interface CommunityRequest {
     @Builder
     record CreateDTO(
-        @NotBlank
-        @Size(max = 500)
+        @NotBlank(message = "제목을 입력해 주세요.")
+        @Size(max = 500, message = "제목은 최대 500자까지 가능합니다.")
         String title,
-        @NotBlank
-        @Size(max = 3_000)
+        @NotBlank(message = "내용을 입력해 주세요.")
+        @Size(max = 3_000, message = "내용은 최대 3,000자까지 가능합니다.")
         String content,
-        @NotNull
+        @NotNull(message = "카테고리를 선택해 주세요.")
         CommunityCategory category,
         ImageList imageList
     ) implements CommunityRequest {
@@ -87,13 +87,13 @@ public interface CommunityRequest {
         @NotNull
         @Positive
         Long communityId,
-        @NotBlank
-        @Size(max = 500)
+        @NotBlank(message = "제목을 입력해 주세요.")
+        @Size(max = 500, message = "제목은 최대 500자까지 가능합니다.")
         String title,
-        @NotBlank
-        @Size(max = 3_000)
+        @NotBlank(message = "내용을 입력해 주세요.")
+        @Size(max = 3_000, message = "내용은 최대 3,000자까지 가능합니다.")
         String content,
-        @NotNull
+        @NotNull(message = "카테고리를 선택해 주세요.")
         CommunityCategory category,
         ImageList imageList
     ) implements CommunityRequest {

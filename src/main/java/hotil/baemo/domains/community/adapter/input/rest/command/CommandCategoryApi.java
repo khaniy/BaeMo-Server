@@ -4,7 +4,7 @@ import hotil.baemo.core.common.response.ResponseDTO;
 import hotil.baemo.core.security.jwt.authentication.BaeMoUserDetails;
 import hotil.baemo.domains.community.adapter.input.rest.annotation.CommunitiesApi;
 import hotil.baemo.domains.community.adapter.input.rest.dto.request.CategoryRequest;
-import hotil.baemo.domains.community.application.usecases.CategoryUseCase;
+import hotil.baemo.domains.community.application.usecases.category.CategoryUseCase;
 import hotil.baemo.domains.community.domain.entity.CommunityUserId;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

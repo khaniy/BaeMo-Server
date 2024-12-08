@@ -1,9 +1,10 @@
 package hotil.baemo.domains.relation.application.ports.output;
 
-import hotil.baemo.domains.relation.domain.aggregate.Relation;
-import hotil.baemo.domains.relation.domain.event.RelationEvent;
+import hotil.baemo.domains.relation.domain.value.UserId;
 
-public interface RelationEventOutPort extends RelationEvent {
+public interface RelationEventOutPort {
 
-    void friendDeleted(Relation relation);
+    void friendRequest(UserId userId, UserId targetId);
+
+    void friendRequestApproved(UserId userId, UserId targetId);
 }

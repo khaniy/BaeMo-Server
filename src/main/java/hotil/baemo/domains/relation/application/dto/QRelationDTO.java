@@ -12,6 +12,15 @@ public interface QRelationDTO {
     ) implements QRelationDTO {
     }
 
+    record ApplyFriendsListView(
+        Long relationId,
+        Long userId,
+        String userName,
+        String userProfileUrl,
+        String userDescription
+    ) implements QRelationDTO {
+    }
+
     record BlockUserListView(
         Long relationId,
         Long userId,

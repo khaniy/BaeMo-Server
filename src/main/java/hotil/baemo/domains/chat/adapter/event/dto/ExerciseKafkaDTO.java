@@ -3,9 +3,6 @@ package hotil.baemo.domains.chat.adapter.event.dto;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import hotil.baemo.domains.exercise.adapter.event.dto.ExerciseEventDTO;
-import lombok.Builder;
-
 public interface ExerciseKafkaDTO {
 	record Created(
 		Long exerciseId,

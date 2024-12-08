@@ -1,5 +1,7 @@
 package hotil.baemo.domains.community.domain.value.image;
 
+import lombok.Builder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -8,6 +10,7 @@ import java.util.stream.Stream;
 public class CommunityImageList {
     private final List<CommunityImageDetails> list;
 
+    @Builder
     public CommunityImageList(List<CommunityImageDetails> list) {
         this.list = list;
     }

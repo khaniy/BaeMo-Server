@@ -3,7 +3,7 @@ package hotil.baemo.domains.users.adapter.output;
 import hotil.baemo.core.common.response.ResponseCode;
 import hotil.baemo.core.common.response.exception.CustomException;
 import hotil.baemo.core.redis.BaemoRedis;
-import hotil.baemo.domains.users.adapter.output.persistence.repository.AbstractBaeMoUsersEntityJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.UserJpaRepository;
 import hotil.baemo.domains.users.application.dto.ValidJoinResult;
 import hotil.baemo.domains.users.application.ports.output.ValidUsersOutputPort;
 import hotil.baemo.domains.users.domain.value.auth.AuthenticationCode;
@@ -18,15 +18,15 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class ValidUserOutputAdapter implements ValidUsersOutputPort {
-    private final AbstractBaeMoUsersEntityJpaRepository abstractBaeMoUsersEntityJpaRepository;
+    private final UserJpaRepository userJpaRepository;
     private final BaemoRedis baemoRedis;
 
     @Override
     public ValidJoinResult validPhoneForSignUp(Phone phone) {
         JoinType joinType = JoinType.NONE;
         RealName realName = null;
-        if (abstractBaeMoUsersEntityJpaRepository.existsByPhone(phone.phone())) {
-            final var usersEntity = abstractBaeMoUsersEntityJpaRepository.loadByPhone(phone.phone());
+        if (userJpaRepository.existsByPhone(phone.phone())) {
+            final var usersEntity = userJpaRepository.loadByPhone(phone.phone());
             joinType = usersEntity.getJoinType();
             realName = new RealName(usersEntity.getRealName());
         }
@@ -39,7 +39,7 @@ public class ValidUserOutputAdapter implements ValidUsersOutputPort {
 
     @Override
     public void validPhoneForForgotPassword(Phone phone) {
-        if (!abstractBaeMoUsersEntityJpaRepository.existsByPhone(phone.phone())) {
+        if (!userJpaRepository.existsByPhone(phone.phone())) {
             throw new CustomException(ResponseCode.USERS_NOT_FOUND);
         }
     }

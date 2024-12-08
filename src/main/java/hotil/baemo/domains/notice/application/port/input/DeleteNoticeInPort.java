@@ -2,7 +2,6 @@ package hotil.baemo.domains.notice.application.port.input;
 
 import hotil.baemo.domains.notice.application.port.output.CommandNoticeOutPort;
 import hotil.baemo.domains.notice.application.usecase.DeleteNoticeUseCase;
-import hotil.baemo.domains.notice.domain.aggregate.Notice;
 import hotil.baemo.domains.notice.domain.spec.NoticeSpecification;
 import hotil.baemo.domains.notice.domain.spec.NoticeUserSpecification;
 import hotil.baemo.domains.notice.domain.value.notice.NoticeId;

@@ -5,16 +5,18 @@ import hotil.baemo.domains.community.adapter.output.persistence.repository.Categ
 import hotil.baemo.domains.community.application.ports.output.CategoryOutputPort;
 import hotil.baemo.domains.community.domain.entity.CommunityUserId;
 import hotil.baemo.domains.community.domain.value.CategoryList;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class CategoryOutputAdapter implements CategoryOutputPort {
     private final CategoryJpaRepository categoryJpaRepository;
 
     @Override
-    public void saveSubscript(CategoryList list, CommunityUserId userId) {
+    public void subscribe(CategoryList list, CommunityUserId userId) {
         final var categoryEntity = categoryJpaRepository.findByUserId(userId.id());
         if (categoryEntity == null) {
             categoryJpaRepository.save(CategoryMapper.convert(userId, list));

@@ -17,6 +17,7 @@ public class RelationEntityMapper {
             .targetId(new UserId(entity.getTargetId()))
             .type(entity.getType())
             .status(entity.getStatus())
+            .isDel(entity.getIsDel())
             .build();
     }
 
@@ -27,6 +28,7 @@ public class RelationEntityMapper {
             .targetId(domain.getTargetId().id())
             .type(domain.getType())
             .status(domain.getStatus())
+            .isDel(domain.isDel())
             .build();
     }
 }

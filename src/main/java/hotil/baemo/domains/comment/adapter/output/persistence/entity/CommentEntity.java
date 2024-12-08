@@ -4,7 +4,6 @@ import hotil.baemo.core.common.persistence.BaeMoBaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,20 +28,16 @@ public class CommentEntity extends BaeMoBaseEntity {
 
     @Column(length = 30_000)
     private String content;
-//    @NotNull
-//    @PositiveOrZero
-//    private Long likeCount;
 
     @NotNull
     private Boolean isDelete;
 
     @Builder
-    public CommentEntity(Long communityId, Long writerId, Long preCommentId, String content, Long likeCount, Boolean isDelete) {
+    public CommentEntity(Long communityId, Long writerId, Long preCommentId, String content, Boolean isDelete) {
         this.communityId = communityId;
         this.writerId = writerId;
         this.preCommentId = preCommentId;
         this.content = content;
-//        this.likeCount = likeCount == null ? 0L : likeCount;
         this.isDelete = isDelete != null && isDelete;
     }
 
@@ -51,7 +46,14 @@ public class CommentEntity extends BaeMoBaseEntity {
     }
 
     public void delete() {
-        this.content = "삭제된 댓글입니다.";
         this.isDelete = true;
+    }
+
+    public String getContent() {
+        if (this.isDelete) {
+            return "삭제된 댓글입니다.";
+        }
+
+        return this.content;
     }
 }

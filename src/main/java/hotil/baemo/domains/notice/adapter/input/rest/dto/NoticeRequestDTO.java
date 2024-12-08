@@ -1,11 +1,5 @@
 package hotil.baemo.domains.notice.adapter.input.rest.dto;
 
-import hotil.baemo.domains.clubs.domain.post.aggregate.ClubsPostImageAggregate;
-import hotil.baemo.domains.clubs.domain.post.aggregate.ClubsPostImageAggregateList;
-import hotil.baemo.domains.clubs.domain.post.entity.ClubsPostId;
-import hotil.baemo.domains.clubs.domain.post.value.ClubsPostContent;
-import hotil.baemo.domains.clubs.domain.post.value.ClubsPostTitle;
-import hotil.baemo.domains.clubs.domain.post.value.ClubsPostType;
 import hotil.baemo.domains.notice.domain.aggregate.NoticeImage;
 import hotil.baemo.domains.notice.domain.aggregate.NoticeImages;
 import hotil.baemo.domains.notice.domain.value.image.NoticeImageOrder;

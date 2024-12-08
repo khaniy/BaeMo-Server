@@ -1,12 +1,13 @@
 package hotil.baemo.domains.exercise.application.ports.input.exercise.command;
 
-import hotil.baemo.domains.exercise.application.ports.output.CommandExerciseOutputPort;
-import hotil.baemo.domains.exercise.application.ports.output.ExerciseEventOutPort;
+import hotil.baemo.domains.exercise.application.ports.output.exercise.CommandExerciseOutputPort;
+import hotil.baemo.domains.exercise.application.ports.output.exercise.ExerciseEventOutPort;
+import hotil.baemo.domains.exercise.application.ports.output.exercise.LoadExerciseOutputPort;
+import hotil.baemo.domains.exercise.application.ports.output.user.LoadExerciseUserOutputPort;
 import hotil.baemo.domains.exercise.application.usecases.exercise.command.DeleteExerciseUseCase;
-import hotil.baemo.domains.exercise.domain.roles.ExerciseRule;
-import hotil.baemo.domains.exercise.domain.aggregate.Exercise;
-import hotil.baemo.domains.exercise.domain.roles.RuleSpecification;
-import hotil.baemo.domains.exercise.domain.specification.exercise.command.DeleteExerciseSpecification;
+import hotil.baemo.domains.exercise.domain.policy.exercise.delete.DeleteAllClubExercisePolicy;
+import hotil.baemo.domains.exercise.domain.policy.exercise.delete.DeleteExercisePolicy;
+import hotil.baemo.domains.exercise.domain.value.club.ClubId;
 import hotil.baemo.domains.exercise.domain.value.exercise.ExerciseId;
 import hotil.baemo.domains.exercise.domain.value.user.UserId;
 import jakarta.transaction.Transactional;
@@ -19,16 +20,26 @@ import org.springframework.stereotype.Service;
 public class DeleteExerciseInPort implements DeleteExerciseUseCase {
 
     private final CommandExerciseOutputPort commandExerciseOutputPort;
+    private final LoadExerciseUserOutputPort loadExerciseUserOutputPort;
+    private final LoadExerciseOutputPort loadExerciseOutputPort;
     private final ExerciseEventOutPort exerciseEventOutPort;
-    private final RuleSpecification ruleSpecification;
 
     @Override
     public void deleteExercise(ExerciseId exerciseId, UserId userId) {
-        Exercise exercise = commandExerciseOutputPort.getExercise(exerciseId);
-        ExerciseRule role = ruleSpecification.getRule(exercise.getExerciseType(), exerciseId, userId);
+        DeleteExercisePolicy.execute(userId, exerciseId)
+            .valid(loadExerciseUserOutputPort::loadExerciseUser)
+            .get(loadExerciseOutputPort::loadExercise)
+            .delete()
+            .persist(commandExerciseOutputPort::delete)
+            .produce(exerciseEventOutPort::exerciseDeleted);
+    }
 
-        DeleteExerciseSpecification.spec(role, exercise).delete(exercise);
-        commandExerciseOutputPort.deleteExercise(exercise);
-        exerciseEventOutPort.exerciseDeleted(exercise, userId);
+    @Override
+    public void deleteAllActiveClubExercises(ClubId clubId) {
+        DeleteAllClubExercisePolicy.execute(clubId)
+            .get(loadExerciseOutputPort::loadAllActiveClubExercises)
+            .deleteAll()
+            .persist(commandExerciseOutputPort::deleteAll)
+            .produce(exerciseEventOutPort::exerciseDeleted);
     }
 }

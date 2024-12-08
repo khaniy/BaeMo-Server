@@ -9,10 +9,10 @@ import java.util.List;
 public interface CategoryRequest {
     @Builder
     record SubscribeDTO(
-            List<String> categoryList
+        List<CommunityCategory> categoryList
     ) implements CategoryRequest {
-        public CategoryList toCategoryList(){
-            return CategoryList.getInstanceFromDescription(categoryList);
+        public CategoryList toCategoryList() {
+            return CategoryList.of(this.categoryList);
         }
     }
 }

@@ -2,7 +2,7 @@ package hotil.baemo.domains.report.adapter.input.rest;
 
 import hotil.baemo.core.common.response.ResponseDTO;
 import hotil.baemo.core.security.jwt.authentication.BaeMoUserDetails;
-import hotil.baemo.domains.exercise.adapter.input.rest.dto.request.ExerciseRequest;
+import hotil.baemo.domains.exercise.adapter.input.rest.exercise.dto.ExerciseRequest;
 import hotil.baemo.domains.report.adapter.input.rest.dto.response.ReportResponse;
 import hotil.baemo.domains.report.domain.value.club.ClubId;
 import hotil.baemo.domains.report.domain.value.club.ClubReportReason;
@@ -13,7 +13,6 @@ import hotil.baemo.domains.report.adapter.input.rest.dto.request.ReportRequest;
 import hotil.baemo.domains.report.application.usecase.SubmitReportUseCase;
 import hotil.baemo.domains.report.domain.value.post.PostId;
 import hotil.baemo.domains.report.domain.value.user.UserReportReason;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.UsersEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -20,11 +20,6 @@ public class NotificationInPort implements RetrieveNotificationUseCase, CommandN
     private final NotificationOutPort notificationOutPort;
 
     @Override
-    public List<QNotificationDTO.NotificationList> retrieveMyNotifications(UserId userId) {
-        return notificationOutPort.getMyNotifications(userId);
-    }
-
-    @Override
     public List<QNotificationDTO.NotificationList> retrieveMyNotifications(UserId userId, Pageable pageable) {
         return notificationOutPort.getMyNotifications(userId, pageable);
     }
@@ -41,6 +36,7 @@ public class NotificationInPort implements RetrieveNotificationUseCase, CommandN
     }
 
     @Override
+    @Transactional
     public void updateAllNotificationRead(UserId userId) {
         notificationOutPort.updateNotificationsRead(userId);
     }

@@ -14,6 +14,7 @@ import hotil.baemo.domains.chat.adapter.output.repository.memory.ChatRedisReposi
 import hotil.baemo.domains.chat.application.ports.output.port.CommandChatRoomOutPort;
 import hotil.baemo.domains.chat.domain.chat.ChatRoom;
 import hotil.baemo.domains.chat.domain.chat.ChatRoomUser;
+import hotil.baemo.domains.chat.domain.value.room.ChatRoomId;
 import hotil.baemo.domains.chat.domain.value.room.ChatRoomUserStatus;
 import lombok.RequiredArgsConstructor;
 
@@ -49,6 +50,11 @@ public class CommandChatRoomPostgresAdapter implements CommandChatRoomOutPort {
 		if (remainingUsersCount == 0) {
 			chatRoomJpaRepository.deleteByChatRoomId(chatRoomId);
 		}
+	}
+
+	@Override
+	public boolean existsByChatRoomId(ChatRoomId chatRoomId) {
+		return chatRoomJpaRepository.findByChatRoomId(chatRoomId.id()).isPresent();
 	}
 
 	@Override

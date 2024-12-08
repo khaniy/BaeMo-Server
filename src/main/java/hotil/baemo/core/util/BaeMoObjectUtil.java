@@ -43,11 +43,19 @@ public final class BaeMoObjectUtil {
         }
     }
 
-    public static boolean equalsTo(Object a, Object b) {
+    public static boolean isEquals(Object a, Object b) {
         return Objects.equals(a, b);
     }
 
-    public static boolean notEquals(Object a, Object b) {
+    public static boolean isNotEquals(Object a, Object b) {
         return !Objects.equals(a, b);
+    }
+
+    public static boolean isNullValue(Object a) {
+        return Objects.isNull(a);
+    }
+
+    public static boolean isNotNull(Object a) {
+        return !Objects.isNull(a);
     }
 }

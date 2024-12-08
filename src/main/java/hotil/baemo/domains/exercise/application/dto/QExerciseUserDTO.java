@@ -1,6 +1,6 @@
 package hotil.baemo.domains.exercise.application.dto;
 
-import hotil.baemo.domains.exercise.domain.value.user.ExerciseUserMatchStatus;
+import hotil.baemo.domains.exercise.domain.value.match.MatchStatus;
 import hotil.baemo.domains.exercise.domain.value.user.ExerciseUserRole;
 import hotil.baemo.domains.exercise.domain.value.user.ExerciseUserStatus;
 
@@ -12,7 +12,18 @@ public interface QExerciseUserDTO {
         ExerciseUserRole userRole,
         ExerciseUserStatus userStatus,
         String appliedName,
-        String level
+        String level,
+        String gender
+    ) implements QExerciseUserDTO {
+    }
+
+    record GuestListView(
+        Long userId,
+        String userName,
+        String profileImage,
+        String userDescription,
+        String level,
+        String gender
     ) implements QExerciseUserDTO {
     }
 
@@ -20,8 +31,10 @@ public interface QExerciseUserDTO {
         Long userId,
         String userName,
         String profileImage,
-        ExerciseUserMatchStatus userStatus,
-        String level
+        MatchStatus userStatus,
+        String level,
+        String gender,
+        Long matchCount
     ) implements QExerciseUserDTO {
     }
 }

@@ -2,7 +2,7 @@ package hotil.baemo.domains.notice.domain.spec;
 
 import hotil.baemo.domains.notice.domain.value.user.NoticeUserRole;
 import hotil.baemo.domains.notice.domain.value.user.UserId;
-import hotil.baemo.domains.users.adapter.output.persistence.repository.AbstractBaeMoUsersEntityJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +18,10 @@ public class NoticeUserSpecification {
         "01056352584",
         "01042419971"
         );
-    private final AbstractBaeMoUsersEntityJpaRepository abstractBaeMoUsersEntityJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
     public NoticeUserRole getRole(UserId userId) {
-        final var user = abstractBaeMoUsersEntityJpaRepository.loadById(userId.id());
+        final var user = userJpaRepository.loadById(userId.id());
 
         if (ADMIN_PHONES.contains(user.getPhone())) {
             return NoticeUserRole.BAEMO_ADMIN;

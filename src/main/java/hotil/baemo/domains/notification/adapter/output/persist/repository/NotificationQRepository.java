@@ -25,8 +25,8 @@ public class NotificationQRepository {
                 NOTIFICATION.title,
                 NOTIFICATION.body,
                 NOTIFICATION.isRead,
-                NOTIFICATION.domain,
-                NOTIFICATION.domainId,
+                NOTIFICATION.code,
+                NOTIFICATION.domainInfo,
                 NOTIFICATION.createdAt)
             )
             .from(NOTIFICATION)
@@ -45,8 +45,8 @@ public class NotificationQRepository {
                 NOTIFICATION.title,
                 NOTIFICATION.body,
                 NOTIFICATION.isRead,
-                NOTIFICATION.domain,
-                NOTIFICATION.domainId,
+                NOTIFICATION.code,
+                NOTIFICATION.domainInfo,
                 NOTIFICATION.createdAt)
             )
             .from(NOTIFICATION)
@@ -63,8 +63,8 @@ public class NotificationQRepository {
                 NOTIFICATION.title,
                 NOTIFICATION.body,
                 NOTIFICATION.isRead,
-                NOTIFICATION.domain,
-                NOTIFICATION.domainId,
+                NOTIFICATION.code,
+                NOTIFICATION.domainInfo,
                 NOTIFICATION.createdAt)
             )
             .from(NOTIFICATION)
@@ -73,20 +73,4 @@ public class NotificationQRepository {
             .orderBy(NOTIFICATION.createdAt.desc())
             .fetch();
     }
-
-    public List<NotificationEntity> findNotifications(List<Long> notificationIds) {
-        return queryFactory.select(NOTIFICATION)
-            .from(NOTIFICATION)
-            .where(NOTIFICATION.id.in(notificationIds))
-            .fetch();
-    }
-
-    public List<NotificationEntity> findNotificationsByUserId(Long userId) {
-        return queryFactory.select(NOTIFICATION)
-            .from(NOTIFICATION)
-            .where(NOTIFICATION.userId.eq(userId))
-            .fetch();
-    }
-
-
 }

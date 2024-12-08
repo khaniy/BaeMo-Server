@@ -3,7 +3,7 @@ package hotil.baemo.domains.notification.adapter.output.persist.entity;
 
 import hotil.baemo.core.common.persistence.BaeMoBaseEntity;
 import hotil.baemo.domains.notification.adapter.output.persist.entity.converter.DeviceTokensConverter;
-import hotil.baemo.domains.notification.domains.value.notification.NotificationDomain;
+import hotil.baemo.domains.notification.domains.value.notification.NotificationCode;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,19 +28,19 @@ public class NotificationEntity extends BaeMoBaseEntity {
     private String title;
     private String body;
     @Enumerated(value = EnumType.STRING)
-    private NotificationDomain domain;
-    private Long domainId;
+    private NotificationCode code;
+    private String domainInfo;
     private boolean isRead;
 
     @Builder
-    private NotificationEntity(Long id, Long userId, List<String> deviceTokens, String title, String body, NotificationDomain domain,Long domainId, boolean isRead) {
+    private NotificationEntity(Long id, Long userId, List<String> deviceTokens, String title, String body, NotificationCode code, String domainInfo, boolean isRead) {
         this.id = id;
         this.userId = userId;
         this.deviceTokens = deviceTokens;
         this.title = title;
         this.body = body;
-        this.domain = domain;
-        this.domainId = domainId;
+        this.code = code;
+        this.domainInfo = domainInfo;
         this.isRead = isRead;
     }
 

@@ -1,0 +1,44 @@
+package hotil.baemo.domains.exercise.domain.policy.user.retrieve;
+
+import hotil.baemo.core.common.response.ResponseCode;
+import hotil.baemo.core.common.response.exception.CustomException;
+import hotil.baemo.domains.exercise.application.dto.QExerciseUserDTO;
+import hotil.baemo.domains.exercise.domain.entity.user.ExerciseUser;
+import hotil.baemo.domains.exercise.domain.value.exercise.ExerciseId;
+import hotil.baemo.domains.exercise.domain.value.user.UserId;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class RetrievePendingExerciseUserPolicy {
+
+    private final UserId userId;
+    private final ExerciseId exerciseId;
+
+
+    public static RetrievePendingExerciseUserPolicy execute(UserId userId, ExerciseId exerciseId) {
+        return new RetrievePendingExerciseUserPolicy(userId, exerciseId);
+    }
+
+    public LoadStep valid(final BiFunction<ExerciseId, UserId, ExerciseUser> getRule) {
+        ExerciseUser rule = getRule.apply(exerciseId, userId);
+        if (!rule.isAdmin()) {
+            throw new CustomException(ResponseCode.EXERCISE_ROLE_AUTH_FAILED);
+        }
+        return LoadStep.of(exerciseId);
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE, staticName = "of")
+    public static class LoadStep {
+
+        private final ExerciseId exerciseId;
+
+        public List<QExerciseUserDTO.ExerciseUserListView> get(final Function<ExerciseId, List<QExerciseUserDTO.ExerciseUserListView>> getExercise) {
+            return getExercise.apply(exerciseId);
+        }
+    }
+}

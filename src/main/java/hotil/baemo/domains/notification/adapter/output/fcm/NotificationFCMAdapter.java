@@ -7,7 +7,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.SendResponse;
 import hotil.baemo.domains.notification.adapter.output.fcm.mapper.FCMMessageMapper;
 import hotil.baemo.domains.notification.application.port.output.MessagingOutPort;
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +26,6 @@ public class NotificationFCMAdapter implements MessagingOutPort {
 
     @Override
     public void sendMessage(Notification notification) {
-        sendMulticastMessage(notification);
-    }
-
-    private void sendMulticastMessage(Notification notification) {
         for (int i = 0; i < notification.getDeviceTokens().size(); i += FCM_LIMIT_PER_REQUEST) {
             int lastIndex = Math.min(i + FCM_LIMIT_PER_REQUEST, notification.getDeviceTokens().size());
             List<DeviceToken> batch = notification.getDeviceTokens().subList(i, lastIndex);

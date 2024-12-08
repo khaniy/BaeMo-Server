@@ -4,10 +4,12 @@ import hotil.baemo.core.aws.AwsS3Service;
 import hotil.baemo.core.aws.value.DomainType;
 import hotil.baemo.core.common.response.ResponseCode;
 import hotil.baemo.core.common.response.exception.CustomException;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.UserLocationEntity;
 import hotil.baemo.domains.users.adapter.output.persistence.mapper.UsersMapper;
-import hotil.baemo.domains.users.adapter.output.persistence.repository.AbstractBaeMoUsersEntityJpaRepository;
-import hotil.baemo.domains.users.adapter.output.persistence.repository.BaeMoUserEntityJpaRepository;
-import hotil.baemo.domains.users.adapter.output.persistence.repository.SocialJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.BaeMoUserJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.SocialUserJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.UserJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.UserLocationJpaRepository;
 import hotil.baemo.domains.users.application.ports.output.command.CommandUsersOutputPort;
 import hotil.baemo.domains.users.domain.value.aggregate.SocialUsersAggregate;
 import hotil.baemo.domains.users.domain.value.aggregate.UsersAggregate;
@@ -21,12 +23,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CommandUsersAdapter implements CommandUsersOutputPort {
-    private final BaeMoUserEntityJpaRepository baeMoUserEntityJpaRepository;
-    private final SocialJpaRepository socialJpaRepository;
-    private final AbstractBaeMoUsersEntityJpaRepository abstractBaeMoUsersEntityJpaRepository;
+    private final BaeMoUserJpaRepository baeMoUserJpaRepository;
+    private final SocialUserJpaRepository socialUserJpaRepository;
+    private final UserJpaRepository userJpaRepository;
+    private final UserLocationJpaRepository userLocationJpaRepository;
     private final AwsS3Service awsS3Service;
     private final UsersMapper usersMapper;
     private final PasswordEncoder passwordEncoder;
@@ -37,7 +42,7 @@ public class CommandUsersAdapter implements CommandUsersOutputPort {
         final var encode = passwordEncoder.encode(userEntity.getPassword());
         userEntity.updatePassword(encode);
 
-        final var savedEntity = baeMoUserEntityJpaRepository.save(userEntity);
+        final var savedEntity = baeMoUserJpaRepository.save(userEntity);
 
         return new UsersId(savedEntity.getId());
     }
@@ -45,14 +50,14 @@ public class CommandUsersAdapter implements CommandUsersOutputPort {
     @Override
     public SocialId save(SocialUsersAggregate socialUsersAggregate) {
         final var socialEntity = usersMapper.convert(socialUsersAggregate);
-        final var savedEntity = socialJpaRepository.save(socialEntity);
+        final var savedEntity = socialUserJpaRepository.save(socialEntity);
 
         return new SocialId(savedEntity.getId());
     }
 
     @Override
     public void updatePassword(Phone phone, JoinPassword joinPassword) {
-        final var usersEntity = baeMoUserEntityJpaRepository.findByPhone(phone.phone())
+        final var usersEntity = baeMoUserJpaRepository.findByPhone(phone.phone())
             .orElseThrow(() -> new CustomException(ResponseCode.USERS_NOT_FOUND));
         final var encode = passwordEncoder.encode(joinPassword.password());
         usersEntity.updatePassword(encode);
@@ -61,27 +66,57 @@ public class CommandUsersAdapter implements CommandUsersOutputPort {
     @Override
     public void updateProfile(
         UsersId usersId,
-        Nickname nickname,
         RealName realName,
         Level level,
-        Birth birth,
         Gender gender,
         Description description,
+        List<Location> location,
         MultipartFile profile
     ) {
-        final var user = abstractBaeMoUsersEntityJpaRepository.findById(usersId.id())
+        final var user = userJpaRepository.findById(usersId.id())
             .orElseThrow(() -> new CustomException(ResponseCode.USERS_NOT_FOUND));
         if (profile != null) {
-            String url = awsS3Service.write(profile, DomainType.USERS);
+            String url = awsS3Service.write(profile, DomainType.USER_THUMBNAIL);
             user.updateProfileImage(url);
         }
         user.updateProfile(
-            nickname.name(),
             realName.name(),
             level,
-            birth != null ? birth.birth() : null,
             gender,
             description != null ? description.description() : null
         );
+        if (location != null) {
+            userLocationJpaRepository.deleteByUserId(user.userId());
+            userLocationJpaRepository.saveAll(location.stream().map(
+                    c -> UserLocationEntity.builder()
+                        .userId(user.userId())
+                        .location(c.location())
+                        .locationCode(Long.parseLong(c.code()))
+                        .build())
+                .toList()
+            );
+        }
+    }
+
+    @Override
+    public void updateProfile(UsersId usersId, Description description, List<Location> location, MultipartFile profile) {
+        final var user = userJpaRepository.findById(usersId.id())
+            .orElseThrow(() -> new CustomException(ResponseCode.USERS_NOT_FOUND));
+        if (profile != null) {
+            String url = awsS3Service.write(profile, DomainType.USER_THUMBNAIL);
+            user.updateProfileImage(url);
+        }
+        user.updateProfile(description.description());
+        if (location != null) {
+            userLocationJpaRepository.deleteByUserId(user.userId());
+            userLocationJpaRepository.saveAll(location.stream().map(
+                    c -> UserLocationEntity.builder()
+                        .userId(user.userId())
+                        .location(c.location())
+                        .locationCode(Long.parseLong(c.code()))
+                        .build())
+                .toList()
+            );
+        }
     }
 }

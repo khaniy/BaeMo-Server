@@ -1,14 +1,12 @@
 package hotil.baemo.domains.exercise.application.ports.input.user.command;
 
-import hotil.baemo.domains.exercise.application.ports.output.CommandExerciseOutputPort;
-import hotil.baemo.domains.exercise.application.ports.output.ExerciseEventOutPort;
+import hotil.baemo.domains.exercise.application.ports.output.exercise.CommandExerciseOutputPort;
+import hotil.baemo.domains.exercise.application.ports.output.exercise.LoadExerciseOutputPort;
+import hotil.baemo.domains.exercise.application.ports.output.user.ExerciseUserEventOutPort;
+import hotil.baemo.domains.exercise.application.ports.output.user.LoadExerciseUserOutputPort;
 import hotil.baemo.domains.exercise.application.usecases.user.command.ApprovePendingUserUseCase;
-import hotil.baemo.domains.exercise.domain.aggregate.ClubExercise;
-import hotil.baemo.domains.exercise.domain.aggregate.Exercise;
-import hotil.baemo.domains.exercise.domain.aggregate.ExerciseUser;
-import hotil.baemo.domains.exercise.domain.roles.ExerciseRule;
-import hotil.baemo.domains.exercise.domain.roles.RuleSpecification;
-import hotil.baemo.domains.exercise.domain.specification.exercise.command.UpdateExerciseUserSpecification;
+import hotil.baemo.domains.exercise.domain.policy.user.update.ApprovePendingGuestPolicy;
+import hotil.baemo.domains.exercise.domain.policy.user.update.ApprovePendingUserPolicy;
 import hotil.baemo.domains.exercise.domain.value.exercise.ExerciseId;
 import hotil.baemo.domains.exercise.domain.value.user.UserId;
 import jakarta.transaction.Transactional;
@@ -21,31 +19,33 @@ import org.springframework.stereotype.Service;
 public class ApprovePendingUserInputPort implements ApprovePendingUserUseCase {
 
     private final CommandExerciseOutputPort commandExerciseOutputPort;
-    private final RuleSpecification ruleSpecification;
-    private final ExerciseEventOutPort exerciseEventOutPort;
+    private final LoadExerciseUserOutputPort loadExerciseUserOutputPort;
+    private final LoadExerciseOutputPort loadExerciseOutputPort;
+    private final ExerciseUserEventOutPort exerciseUserEventOutPort;
 
     @Override
     public void approvePendingMember(ExerciseId exerciseId, UserId userId, UserId targetUserId) {
-        Exercise exercise = commandExerciseOutputPort.getExercise(exerciseId);
-        ExerciseRule role = ruleSpecification.getRule(exercise.getExerciseType(), exerciseId, userId);
-
-        ExerciseUser targetUser = UpdateExerciseUserSpecification.spec(role, exercise).approvePendingMember(exercise, targetUserId);
-        commandExerciseOutputPort.save(exercise);
-        exerciseEventOutPort.exerciseUserApproved(exercise, targetUser);
-        exerciseEventOutPort.exerciseUserParticipated(exercise, targetUser);
-
+        ApprovePendingUserPolicy.execute(userId, exerciseId)
+            .valid(loadExerciseUserOutputPort::loadExerciseUser)
+            .get(loadExerciseOutputPort::loadExercise)
+            .approvePendingUser(targetUserId)
+            .persist(commandExerciseOutputPort::save)
+            .produce(
+                exerciseUserEventOutPort::exerciseUserApproved,
+                exerciseUserEventOutPort::exerciseUserParticipated
+            );
     }
 
     @Override
     public void approvePendingGuest(ExerciseId exerciseId, UserId userId, UserId targetUserId) {
-        ClubExercise clubExercise = commandExerciseOutputPort.getClubExercise(exerciseId);
-        ExerciseRule role = ruleSpecification.getRule(clubExercise.getExerciseType(), exerciseId, userId);
-
-        ExerciseUser targetUser = UpdateExerciseUserSpecification.spec(role, clubExercise).approvePendingGuest(clubExercise, targetUserId);
-
-        commandExerciseOutputPort.save(clubExercise);
-        exerciseEventOutPort.exerciseUserApproved(clubExercise, targetUser);
-        exerciseEventOutPort.exerciseUserParticipated(clubExercise, targetUser);
-
+        ApprovePendingGuestPolicy.execute(userId, exerciseId)
+            .valid(loadExerciseUserOutputPort::loadExerciseUser)
+            .get(loadExerciseOutputPort::loadClubExercise)
+            .approvePendingGuest(targetUserId)
+            .persist(commandExerciseOutputPort::save)
+            .produce(
+                exerciseUserEventOutPort::exerciseUserApproved,
+                exerciseUserEventOutPort::exerciseUserParticipated
+            );
     }
 }

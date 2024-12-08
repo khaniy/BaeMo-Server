@@ -1,7 +1,7 @@
 package hotil.baemo.domains.users.adapter.output.persistence.mapper;
 
-import hotil.baemo.domains.users.adapter.output.persistence.entity.SocialEntity;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.UsersEntity;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.SocialUserEntity;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.UserEntity;
 import hotil.baemo.domains.users.adapter.output.persistence.entity.BaeMoUserEntity;
 import hotil.baemo.domains.users.domain.value.aggregate.SocialUsersAggregate;
 import hotil.baemo.domains.users.domain.value.aggregate.UsersAggregate;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UsersMapper {
 
-    public UsersAggregate convert(final UsersEntity entity) {
+    public UsersAggregate convert(final UserEntity entity) {
         return UsersAggregate.builder()
             .build();
     }
@@ -35,8 +35,8 @@ public class UsersMapper {
             .build();
     }
 
-    public SocialEntity convert(final SocialUsersAggregate domain) {
-        return SocialEntity.builder()
+    public SocialUserEntity convert(final SocialUsersAggregate domain) {
+        return SocialUserEntity.builder()
             .id(domain.socialId() != null ? domain.socialId().id() : null)
             .joinType(domain.socialCredentialAggregate().joinType())
             .phone(domain.socialCredentialAggregate().phone().phone())

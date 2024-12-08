@@ -51,4 +51,12 @@ public class QueryRelationApiAdapter {
             new UserCode(dto.userCode()))
         );
     }
+
+    @Operation(summary = "친구 신청 리스트 조회")
+    @GetMapping("/friend/apply/my")
+    public ResponseDTO<List<QRelationDTO.ApplyFriendsListView>> retrieveApplyFriends(
+        @AuthenticationPrincipal BaeMoUserDetails user
+    ) {
+        return ResponseDTO.ok(retrieveFriendsUseCase.retrieveApplyFriends(new UserId(user.userId())));
+    }
 }

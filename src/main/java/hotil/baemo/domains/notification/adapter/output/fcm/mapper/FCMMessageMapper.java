@@ -1,10 +1,8 @@
 package hotil.baemo.domains.notification.adapter.output.fcm.mapper;
 
 import com.google.firebase.messaging.MulticastMessage;
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
-import hotil.baemo.domains.notification.domains.value.notification.DomainId;
-import hotil.baemo.domains.notification.domains.value.notification.NotificationDomain;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +13,7 @@ public class FCMMessageMapper {
     public static MulticastMessage toMulticastMessage(List<DeviceToken> batch, Notification notification) {
         return MulticastMessage.builder()
             .setNotification(buildNotification(notification))
-            .putAllData(buildData(notification.getDomain(), notification.getDomainId()))
+            .putAllData(buildData(notification))
             .addAllTokens(batch.stream().map(DeviceToken::token).toList())
             .build();
     }
@@ -28,10 +26,11 @@ public class FCMMessageMapper {
             .build();
     }
 
-    private static Map<String, String> buildData(NotificationDomain domain, DomainId domainId) {
+    private static Map<String, String> buildData(Notification notification) {
         Map<String, String> data = new HashMap<>();
-        data.put("domain", domain!=null ? domain.toString() : "NotExisted");
-        data.put("domainId", domainId!=null ? String.valueOf(domainId.id()) : "NotExisted");
+        data.put("domain", notification.getCode() != null ?  notification.getCode().name() : "null");
+        data.put("headerTitle",notification.getData() != null? notification.getData().headerTitle() : "null");
+        data.put("id",notification.getData() != null? String.valueOf(notification.getData().id()) : "null");
         return data;
     }
 }

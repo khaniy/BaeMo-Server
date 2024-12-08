@@ -15,8 +15,8 @@ import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Getter
-@SQLDelete(sql = "UPDATE tb_device_info SET is_del = true WHERE id = ?")
-@Table(name = "tb_device_info")
+@SQLDelete(sql = "UPDATE tb_user_device SET is_del = true WHERE id = ?")
+@Table(name = "tb_user_device")
 @NoArgsConstructor
 public class DeviceEntity extends BaeMoBaseEntity {
     @Id

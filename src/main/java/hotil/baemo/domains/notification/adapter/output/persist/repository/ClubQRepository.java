@@ -3,8 +3,8 @@ package hotil.baemo.domains.notification.adapter.output.persist.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hotil.baemo.core.common.response.ResponseCode;
 import hotil.baemo.core.common.response.exception.CustomException;
-import hotil.baemo.domains.clubs.adapter.clubs.output.persistence.entity.QClubsEntity;
-import hotil.baemo.domains.exercise.adapter.output.persist.entity.QClubExerciseEntity;
+import hotil.baemo.domains.clubs.adapter.output.persist.club.entity.QClubsEntity;
+import hotil.baemo.domains.exercise.adapter.output.persist.exercise.command.entity.QClubExerciseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

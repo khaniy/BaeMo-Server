@@ -22,6 +22,14 @@ public class FriendSpecification {
         return Relation.initFriend(userId, targetId);
     }
 
+    public Relation approveFriend(UserId userId, UserId targetId) {
+        if(userId.equals(targetId)){
+            throw new CustomException(ResponseCode.RELATION_UNABLE);
+        }
+        return Relation.approveFriend(userId, targetId);
+    }
+
+
     public Relation deleteFriend(UserId userId, Relation relation) {
         if (!relation.isUserRelation(userId)) {
             throw new CustomException(ResponseCode.RELATION_NOT_FOUND);

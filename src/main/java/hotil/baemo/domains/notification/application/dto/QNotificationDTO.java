@@ -1,6 +1,6 @@
 package hotil.baemo.domains.notification.application.dto;
 
-import hotil.baemo.domains.notification.domains.value.notification.NotificationDomain;
+import hotil.baemo.domains.notification.domains.value.notification.NotificationCode;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -13,8 +13,8 @@ public interface QNotificationDTO {
         String title,
         String body,
         boolean isRead,
-        NotificationDomain domain,
-        Long domainId,
+        NotificationCode code,
+        String data,
         Instant createdAt
     ) implements QNotificationDTO {
     }

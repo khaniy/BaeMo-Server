@@ -18,9 +18,9 @@ import static lombok.AccessLevel.PROTECTED;
 
 @Getter
 @Entity
-@Table(name = "tb_users")
+@Table(name = "tb_user_baemo")
 @NoArgsConstructor(access = PROTECTED)
-public class BaeMoUserEntity extends AbstractBaeMoUsersEntity {
+public class BaeMoUserEntity extends UserEntity {
     @NotBlank
     private String password;
 

@@ -1,5 +1,6 @@
 package hotil.baemo.domains.users.application.dto;
 
+import hotil.baemo.domains.relation.domain.value.FriendRequestStatus;
 import hotil.baemo.domains.users.domain.value.information.Level;
 import lombok.Builder;
 
@@ -11,6 +12,7 @@ public interface QUserProfileDTO {
         String realName,
         String nickName,
         Level level,
+        String gender,
 //    String location,
         String baemoCode,
         String description,
@@ -23,10 +25,12 @@ public interface QUserProfileDTO {
         Long userId,
         String realName,
         Level level,
+        String gender,
 //    String location,
         String description,
         String profileUrl,
-        boolean isFriend
+        boolean isFriend,
+        FriendRequestStatus friendRequestStatus
     ) implements QUserProfileDTO {
     }
     @Builder
@@ -34,6 +38,7 @@ public interface QUserProfileDTO {
         Long userId,
         String realName,
         Level level,
+        String gender,
 //    String location,
         String description,
         String profileUrl

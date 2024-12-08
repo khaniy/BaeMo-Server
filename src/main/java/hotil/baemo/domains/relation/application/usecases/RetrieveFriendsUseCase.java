@@ -12,4 +12,5 @@ public interface RetrieveFriendsUseCase {
     List<QRelationDTO.BlockUserListView> retrieveBlockUsers(UserId userId);
 
     List<QRelationDTO.FindFriends> retrieveFriend(UserId userId, UserCode userCode);
+    List<QRelationDTO.ApplyFriendsListView> retrieveApplyFriends(UserId userId);
 }

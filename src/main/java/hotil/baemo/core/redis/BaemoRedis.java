@@ -1,5 +1,6 @@
 package hotil.baemo.core.redis;
 
+import hotil.baemo.config.redis.RedisProperties;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

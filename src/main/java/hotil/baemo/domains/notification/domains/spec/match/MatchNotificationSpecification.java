@@ -1,48 +1,46 @@
 package hotil.baemo.domains.notification.domains.spec.match;
 
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.aggregate.NotificationData;
+import hotil.baemo.domains.notification.domains.entity.Notification;
+import hotil.baemo.domains.notification.domains.value.exercise.ExerciseId;
+import hotil.baemo.domains.notification.domains.value.exercise.ExerciseTitle;
 import hotil.baemo.domains.notification.domains.value.match.MatchCourtNumber;
 import hotil.baemo.domains.notification.domains.value.match.MatchId;
 import hotil.baemo.domains.notification.domains.value.match.MatchOrder;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
-import hotil.baemo.domains.notification.domains.value.notification.DomainId;
-import hotil.baemo.domains.notification.domains.value.notification.NotificationDomain;
+import hotil.baemo.domains.notification.domains.value.notification.NotificationCode;
 
 import java.util.List;
 
 public class MatchNotificationSpecification {
 
     public static Notification matchUpdatedToNext(
-        MatchId matchId,
-        List<DeviceToken> deviceTokens,
-        MatchCourtNumber matchCourtNumber,
+        MatchId matchId, ExerciseId exerciseId, ExerciseTitle exerciseTitle, List<DeviceToken> deviceTokens,
         MatchOrder matchOrder
     ) {
-        final var title = MatchNotificationTitleSpecification.matchUpdatedToNext(matchOrder, matchCourtNumber);
-        final var body = MatchNotificationBodySpecification.matchUpdatedToNext();
-        return Notification.builder()
+
+        return MatchNotificationBuilder.matchUpdatedToNext(matchOrder)
             .deviceTokens(deviceTokens)
-            .domainId(new DomainId(matchId.id()))
-            .domain(NotificationDomain.MATCH)
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
     }
 
     public static Notification matchUpdatedToProgress(
-        MatchId matchId,
-        List<DeviceToken> deviceTokens,
+        MatchId matchId, ExerciseId exerciseId, ExerciseTitle exerciseTitle, List<DeviceToken> deviceTokens,
         MatchCourtNumber matchCourtNumber,
         MatchOrder matchOrder
     ) {
-        final var title = MatchNotificationTitleSpecification.matchUpdatedToProgress(matchOrder, matchCourtNumber);
-        final var body = MatchNotificationBodySpecification.matchUpdatedToProgress();
-        return Notification.builder()
+        return MatchNotificationBuilder.matchUpdatedToProgress(matchOrder, matchCourtNumber)
             .deviceTokens(deviceTokens)
-            .domainId(new DomainId(matchId.id()))
-            .domain(NotificationDomain.MATCH)
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
     }
 }

@@ -1,11 +1,13 @@
 package hotil.baemo.domains.notification.domains.spec.exercise;
 
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.aggregate.NotificationData;
+import hotil.baemo.domains.notification.domains.entity.Notification;
+import hotil.baemo.domains.notification.domains.value.club.ClubId;
 import hotil.baemo.domains.notification.domains.value.club.ClubTitle;
 import hotil.baemo.domains.notification.domains.value.exercise.*;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
-import hotil.baemo.domains.notification.domains.value.notification.DomainId;
-import hotil.baemo.domains.notification.domains.value.notification.NotificationDomain;
+import hotil.baemo.domains.notification.domains.value.notification.DomainInfo;
+import hotil.baemo.domains.notification.domains.value.notification.NotificationCode;
 import hotil.baemo.domains.notification.domains.value.user.UserName;
 
 import java.util.List;
@@ -14,55 +16,21 @@ public class ExerciseNotificationSpecification {
 
     public static Notification exerciseCreated(
         ExerciseId exerciseId,
+        ClubId clubId,
         List<DeviceToken> deviceTokens,
         ClubTitle clubTitle,
         ExerciseTitle exerciseTitle,
         ExerciseLocation exerciseLocation,
         ExerciseTime exerciseTime
     ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseCreated(clubTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseCreated(exerciseTitle, exerciseLocation, exerciseTime);
-        return Notification.builder()
+        return ExerciseNotificationBuilder.exerciseCreated(clubTitle, exerciseTitle, exerciseLocation, exerciseTime)
             .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
-    }
-
-    public static Notification exerciseDeleted(
-        ExerciseId exerciseId,
-        List<DeviceToken> deviceTokens,
-        ExerciseTitle exerciseTitle
-    ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseDeleted(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseDeleted();
-        return Notification.builder()
-            .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
-            .build();
-    }
-
-    public static Notification exerciseUserParticipated(
-        ExerciseId exerciseId,
-        List<DeviceToken> deviceTokens,
-        ExerciseTitle exerciseTitle,
-        UserName userName
-    ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseUserParticipated(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseUserParticipated(userName);
-        return Notification.builder()
-            .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
-            .build();
-
     }
 
     public static Notification exerciseParticipationApplied(
@@ -71,84 +39,115 @@ public class ExerciseNotificationSpecification {
         ExerciseTitle exerciseTitle,
         UserName userName
     ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseParticipationApplied(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseParticipationApplied(userName);
-        return Notification.builder()
+        return ExerciseNotificationBuilder.exerciseParticipationApplied(exerciseTitle, userName)
             .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
 
     }
 
     public static Notification exerciseGuestApplied(
         ExerciseId exerciseId,
+        ClubId clubId,
         List<DeviceToken> deviceTokens,
         ExerciseTitle exerciseTitle,
         UserName userName,
-        UserName guestName
+        UserName guestName,
+        boolean toGuest
     ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseGuestApplied(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseGuestApplied(userName, guestName);
-        return Notification.builder()
+        return ExerciseNotificationBuilder.exerciseGuestApplied(exerciseTitle, userName, guestName, toGuest)
             .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
     }
 
     public static Notification exerciseUserApproved(
         ExerciseId exerciseId,
+        ClubId clubId,
         List<DeviceToken> deviceTokens,
         ExerciseTitle exerciseTitle,
         ExerciseUserStatus exerciseUserStatus
     ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseUserApproved(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseUserApproved(exerciseUserStatus);
-        return Notification.builder()
+        return ExerciseNotificationBuilder.exerciseUserApproved(exerciseTitle, exerciseUserStatus)
             .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
     }
 
-    public static Notification exerciseUserCancelled(
+
+    public static Notification exerciseUserParticipated(
         ExerciseId exerciseId,
+        ClubId clubId,
+        List<DeviceToken> deviceTokens,
+        ExerciseUserStatus exerciseUserStatus,
+        ExerciseTitle exerciseTitle,
+        UserName userName
+    ) {
+        return ExerciseNotificationBuilder.exerciseUserParticipated(exerciseUserStatus, exerciseTitle, userName)
+            .deviceTokens(deviceTokens)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
+            .build();
+    }
+
+    public static Notification exerciseUserLeft(
+        ExerciseId exerciseId,
+        ClubId clubId,
         List<DeviceToken> deviceTokens,
         ExerciseTitle exerciseTitle,
         UserName userName
     ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseUserCancelled(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseUserCancelled(userName);
-        return Notification.builder()
+        return ExerciseNotificationBuilder.exerciseUserLeft(exerciseTitle, userName)
             .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
             .build();
     }
 
     public static Notification exerciseUserExpelled(
         ExerciseId exerciseId,
+        ClubId clubId,
         List<DeviceToken> deviceTokens,
         ExerciseTitle exerciseTitle,
         UserName userName
     ) {
-        final var title = ExerciseNotificationTitleSpecification.exerciseUserExpelled(exerciseTitle);
-        final var body = ExerciseNotificationBodySpecification.exerciseUserExpelled(exerciseTitle, userName);
-        return Notification.builder()
+        return ExerciseNotificationBuilder.exerciseUserExpelled(exerciseTitle, userName)
             .deviceTokens(deviceTokens)
-            .domain(NotificationDomain.EXERCISE)
-            .domainId(new DomainId(exerciseId.id()))
-            .title(title)
-            .body(body)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(NotificationData.builder()
+                .id(String.valueOf(exerciseId.id()))
+                .headerTitle(exerciseTitle.title())
+                .build())
+            .build();
+    }
+
+    public static Notification exerciseDeleted(
+        ExerciseId exerciseId,
+        List<DeviceToken> deviceTokens,
+        ExerciseTitle exerciseTitle
+    ) {
+        return ExerciseNotificationBuilder.exerciseDeleted(exerciseTitle)
+            .deviceTokens(deviceTokens)
+            .code(NotificationCode.DETAIL_EXERCISE)
+            .data(null)
             .build();
     }
 }

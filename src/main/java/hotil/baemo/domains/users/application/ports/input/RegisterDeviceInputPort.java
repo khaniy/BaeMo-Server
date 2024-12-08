@@ -40,8 +40,7 @@ public class RegisterDeviceInputPort implements RegisterDeviceUseCase {
     @Override
     @Transactional
     public void unregisterDeviceInfo(UsersId usersId, DeviceUniqueId uniqueId) {
-        final var device = commandDeviceOutPort.getOptionalDevice(uniqueId)
-            .orElseThrow(() -> new CustomException(ResponseCode.DEVICE_NOT_FOUND));
-        commandDeviceOutPort.delete(device);
+        final var device = commandDeviceOutPort.getOptionalDevice(uniqueId);
+        device.ifPresent(commandDeviceOutPort::delete);
     }
 }

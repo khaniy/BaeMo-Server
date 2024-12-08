@@ -14,10 +14,12 @@ import hotil.baemo.domains.chat.domain.value.room.ChatRoomUserStatus;
 import hotil.baemo.domains.chat.domain.value.user.UserId;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SubscribeChatRommInputPort implements SubscribeChatUseCase {
     private final CommandChatRoomUserOutPort commandChatRoomUserOutPort;
 

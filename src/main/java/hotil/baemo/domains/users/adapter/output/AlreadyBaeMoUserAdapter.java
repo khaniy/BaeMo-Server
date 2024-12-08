@@ -2,7 +2,7 @@ package hotil.baemo.domains.users.adapter.output;
 
 import hotil.baemo.core.common.response.ResponseCode;
 import hotil.baemo.core.common.response.exception.CustomException;
-import hotil.baemo.domains.users.adapter.output.persistence.repository.AbstractBaeMoUsersEntityJpaRepository;
+import hotil.baemo.domains.users.adapter.output.persistence.repository.UserJpaRepository;
 import hotil.baemo.domains.users.application.ports.output.AlreadyBaeMoUserOutputPort;
 import hotil.baemo.domains.users.domain.value.credential.Phone;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AlreadyBaeMoUserAdapter implements AlreadyBaeMoUserOutputPort {
-    private final AbstractBaeMoUsersEntityJpaRepository abstractBaeMoUsersEntityJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     public void valid(Phone phone) {
-        if (abstractBaeMoUsersEntityJpaRepository.existsByPhone(phone.phone())) {
-            final var found = abstractBaeMoUsersEntityJpaRepository.loadByPhone(phone.phone());
+        if (userJpaRepository.existsByPhone(phone.phone())) {
+            final var found = userJpaRepository.loadByPhone(phone.phone());
 
             switch (found.getJoinType()) {
                 case BAEMO -> throw new CustomException(ResponseCode.USERS_ALREADY_BAEMO);

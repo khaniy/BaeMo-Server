@@ -1,17 +1,18 @@
 package hotil.baemo.domains.relation.adapter.input.rest;
 
+
 import hotil.baemo.core.common.response.ResponseDTO;
 import hotil.baemo.core.security.jwt.authentication.BaeMoUserDetails;
-import hotil.baemo.core.security.oauth2.persistence.entity.BaeMoOAuth2User;
 import hotil.baemo.domains.relation.adapter.input.rest.dto.request.RelationRequest;
 import hotil.baemo.domains.relation.application.usecases.AddFriendUseCase;
+import hotil.baemo.domains.relation.application.usecases.ApproveFriendUseCase;
 import hotil.baemo.domains.relation.application.usecases.BlockUserUseCase;
 import hotil.baemo.domains.relation.application.usecases.DeleteFriendUseCase;
+import hotil.baemo.domains.relation.application.usecases.RefuseFriendUseCase;
 import hotil.baemo.domains.relation.domain.value.RelationId;
 import hotil.baemo.domains.relation.domain.value.UserCode;
 import hotil.baemo.domains.relation.domain.value.UserId;
 import hotil.baemo.domains.relation.domain.value.UserName;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.UsersEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -27,19 +28,22 @@ public class CommandRelationApiAdapter {
     private final AddFriendUseCase addFriendUseCase;
     private final DeleteFriendUseCase deleteFriendUseCase;
     private final BlockUserUseCase blockUserUseCase;
+    private final ApproveFriendUseCase approveFriendUseCase;
+    private final RefuseFriendUseCase refuseFriendUseCase;
 
+
+    //친구 신청 (status -> PENDING)
     @Operation(summary = "유저 인덱스로 친구 추가하기(프로필 추가)")
     @PostMapping("/friend/{targetId}")
     public ResponseDTO<Void> addFriendById(
         @AuthenticationPrincipal BaeMoUserDetails user,
         @PathVariable Long targetId
     ) {
-
         addFriendUseCase.addFriendById(new UserId(user.userId()), new UserId(targetId));
         return ResponseDTO.ok();
     }
 
-    @Operation(summary = "유저 코드로 친구 추가하기")
+    @Operation(summary = "유저 코드로 친구 신청하기")
     @PostMapping("/friend")
     public ResponseDTO<Void> addFriendByCode(
         @AuthenticationPrincipal BaeMoUserDetails user,
@@ -78,4 +82,23 @@ public class CommandRelationApiAdapter {
         blockUserUseCase.unBlockUser(new UserId(user.userId()), new RelationId(relationId));
         return ResponseDTO.ok();
     }
+
+    //친구 승인 (status -> CONFIRM)
+    @Operation(summary = "친구 신청 승인하기")
+    @PostMapping("/friend/approve/{targetId}")
+    public ResponseDTO<Void> approveFriend(
+        @AuthenticationPrincipal BaeMoUserDetails user, @PathVariable Long targetId) {
+        approveFriendUseCase.approveFriend(new UserId(user.userId()), new UserId(targetId));
+        return ResponseDTO.ok();
+    }
+
+    //친구 거절
+    @Operation(summary = "친구 신청 거절하기")
+    @PostMapping("/friend/refuse/{targetId}")
+    public ResponseDTO<Void> refuseFriend(
+        @AuthenticationPrincipal BaeMoUserDetails user, @PathVariable Long targetId) {
+        refuseFriendUseCase.refuseFriend(new UserId(user.userId()), new UserId(targetId));
+        return ResponseDTO.ok();
+    }
+
 }

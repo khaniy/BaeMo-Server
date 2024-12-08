@@ -9,8 +9,8 @@ import hotil.baemo.domains.comment.domain.entity.CommentWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static hotil.baemo.core.util.BaeMoObjectUtil.equalsTo;
-import static hotil.baemo.core.util.BaeMoObjectUtil.notEquals;
+import static hotil.baemo.core.util.BaeMoObjectUtil.isEquals;
+import static hotil.baemo.core.util.BaeMoObjectUtil.isNotEquals;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ class ValidCommentAdapter implements ValidCommentOutputPort {
     public void validAuthority(CommentWriter commentWriter, CommentId commentId) {
         final var enticommentEntity = commentJpaRepository.load(commentId);
 
-        if (notEquals(enticommentEntity.getWriterId(), commentWriter.id())) {
+        if (isNotEquals(enticommentEntity.getWriterId(), commentWriter.id())) {
             throw new CustomException(ResponseCode.COMMENT_AUTH_FAIL);
         }
     }
@@ -30,7 +30,7 @@ class ValidCommentAdapter implements ValidCommentOutputPort {
     public void validNotAuthor(CommentWriter commentWriter, CommentId commentId) {
         final var enticommentEntity = commentJpaRepository.load(commentId);
 
-        if (equalsTo(enticommentEntity.getWriterId(), commentWriter.id())) {
+        if (isEquals(enticommentEntity.getWriterId(), commentWriter.id())) {
             throw new CustomException(ResponseCode.COMMENT_SELF_LIKE_NOT_ALLOW);
         }
     }
@@ -39,7 +39,7 @@ class ValidCommentAdapter implements ValidCommentOutputPort {
     public void validStatus(CommentId commentId) {
         final var commentEntity = commentJpaRepository.load(commentId);
 
-        if (equalsTo(commentEntity.getIsDelete(), true)) {
+        if (isEquals(commentEntity.getIsDelete(), true)) {
             throw new CustomException(ResponseCode.COMMENT_NOT_FOUND);
         }
     }

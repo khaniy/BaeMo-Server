@@ -37,6 +37,14 @@ public class CommandRelationPersistenceAdapter implements CommandRelationOutputP
     }
 
     @Override
+    public Optional<Relation> getMutualRelation(UserId userId, UserId targetId) {
+        Optional<Relation> userToTargetRelation = getRelation(userId, targetId);
+        Optional<Relation> targetToUserRelation = getRelation(targetId, userId);
+
+        // 관계 중 하나라도 존재하면 반환
+        return targetToUserRelation.isPresent() ? targetToUserRelation : userToTargetRelation;
+    }
+    @Override
     public void delete(Relation relation) {
         commandRelationJpaRepository.delete(RelationEntityMapper.toEntity(relation));
     }

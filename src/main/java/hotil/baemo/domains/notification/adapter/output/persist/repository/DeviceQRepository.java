@@ -1,26 +1,29 @@
 package hotil.baemo.domains.notification.adapter.output.persist.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hotil.baemo.domains.chat.adapter.output.postgres.entity.QChatRoomUserEntity;
 import hotil.baemo.domains.chat.domain.value.room.ChatRoomUserStatus;
-import hotil.baemo.domains.clubs.adapter.clubs.output.persistence.entity.QClubsMemberEntity;
-import hotil.baemo.domains.clubs.domain.clubs.value.ClubsRole;
-import hotil.baemo.domains.exercise.adapter.output.persist.entity.QClubExerciseEntity;
-import hotil.baemo.domains.exercise.adapter.output.persist.entity.QExerciseUserEntity;
+import hotil.baemo.domains.clubs.adapter.output.persist.comment.entity.QClubPostCommentEntity;
+import hotil.baemo.domains.clubs.adapter.output.persist.member.entity.QClubsMemberEntity;
+import hotil.baemo.domains.clubs.adapter.output.persist.post.entity.QClubsPostEntity;
+import hotil.baemo.domains.clubs.domain.value.member.ClubRole;
+import hotil.baemo.domains.exercise.adapter.output.persist.exercise.command.entity.QClubExerciseEntity;
+import hotil.baemo.domains.exercise.adapter.output.persist.user.entity.QExerciseUserEntity;
 import hotil.baemo.domains.exercise.domain.value.user.ExerciseUserRole;
 import hotil.baemo.domains.exercise.domain.value.user.ExerciseUserStatus;
 import hotil.baemo.domains.notification.adapter.output.persist.entity.NotificationEntity;
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
+import hotil.baemo.domains.notification.domains.value.club.ClubId;
+import hotil.baemo.domains.notification.domains.value.club.ClubPostId;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
+import hotil.baemo.domains.notification.domains.value.user.UserId;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.DeviceEntity;
 import hotil.baemo.domains.users.adapter.output.persistence.entity.QDeviceEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -31,10 +34,12 @@ public class DeviceQRepository {
     private static final QClubExerciseEntity CLUB_EXERCISE = QClubExerciseEntity.clubExerciseEntity;
     private static final QExerciseUserEntity EXERCISE_USER = QExerciseUserEntity.exerciseUserEntity;
     private static final QClubsMemberEntity CLUB_USER = QClubsMemberEntity.clubsMemberEntity;
+    private static final QClubsPostEntity CLUB_POST = QClubsPostEntity.clubsPostEntity;
+    private static final QClubPostCommentEntity CLUB_POST_COMMENT = QClubPostCommentEntity.clubPostCommentEntity;
     private static final QChatRoomUserEntity CHAT_ROOM_USER = QChatRoomUserEntity.chatRoomUserEntity;
 
-    public List<String> findDeviceTokensByUser(Long userId) {
-        return queryFactory.select(DEVICE.token)
+    public List<DeviceEntity> findDeviceTokensByUser(Long userId) {
+        return queryFactory.select(DEVICE)
             .from(DEVICE)
             .where(DEVICE.userId.eq(userId)
                 .and(DEVICE.isDel.eq(false)))
@@ -42,8 +47,8 @@ public class DeviceQRepository {
 
     }
 
-    public List<String> findDeviceTokensByUsers(List<Long> userId) {
-        return queryFactory.select(DEVICE.token)
+    public List<DeviceEntity> findDeviceTokensByUsers(List<Long> userId) {
+        return queryFactory.select(DEVICE)
             .from(DEVICE)
             .where(DEVICE.userId.in(userId)
                 .and(DEVICE.isDel.eq(false)))
@@ -51,33 +56,61 @@ public class DeviceQRepository {
 
     }
 
-    public List<String> findClubUsersDeviceTokens(Long exerciseId, Long exceptUserId) {
-        Long clubId = queryFactory.select(CLUB_EXERCISE.clubId)
-            .from(CLUB_EXERCISE)
-            .where(CLUB_EXERCISE.id.eq(exerciseId)
-                .and(CLUB_EXERCISE.isDel.eq(false)))
+    public List<DeviceEntity> findClubMembersDeviceTokens(ClubId clubId, UserId exceptUserId) {
+        return queryFactory.select(DEVICE)
+            .from(CLUB_USER)
+            .where(CLUB_USER.clubsId.eq(clubId.id())
+                .and(CLUB_USER.usersId.ne(exceptUserId.id()))
+                .and(CLUB_USER.clubRole.ne(ClubRole.PENDING))
+                .and(CLUB_USER.isDelete.isFalse())
+            )
+            .leftJoin(DEVICE).on(DEVICE.userId.eq(CLUB_USER.usersId))
+            .fetch();
+    }
+
+    public List<DeviceEntity> findClubAdminDeviceTokens(Long clubId) {
+        return queryFactory.select(DEVICE)
+            .from(CLUB_USER)
+            .where(CLUB_USER.clubsId.eq(clubId)
+                .and(CLUB_USER.clubRole.eq(ClubRole.ADMIN))
+                .and(CLUB_USER.isDelete.isFalse())
+            )
+            .leftJoin(DEVICE).on(DEVICE.userId.eq(CLUB_USER.usersId))
+            .fetch();
+    }
+
+
+    public List<DeviceEntity> findClubManagerDeviceTokens(Long clubId) {
+        return queryFactory.select(DEVICE)
+            .from(CLUB_USER)
+            .where(CLUB_USER.clubsId.eq(clubId)
+                .and(CLUB_USER.clubRole.in(ClubRole.ADMIN, ClubRole.MANAGER))
+                .and(CLUB_USER.isDelete.isFalse())
+            )
+            .leftJoin(DEVICE).on(DEVICE.userId.eq(CLUB_USER.usersId))
+            .fetch();
+    }
+
+    public List<DeviceEntity> findClubPostUsersDeviceTokens(ClubPostId clubPostId, UserId targetUserId) {
+        List<DeviceEntity> tokens = queryFactory.select(DEVICE)
+            .from(CLUB_POST_COMMENT)
+            .where(CLUB_POST_COMMENT.clubPostId.eq(clubPostId.id())
+                .and(CLUB_POST_COMMENT.writerId.ne(targetUserId.id()))
+            )
+            .leftJoin(DEVICE).on(DEVICE.userId.eq(CLUB_POST_COMMENT.writerId))
+            .fetch();
+        DeviceEntity token = queryFactory.select(DEVICE)
+            .from(CLUB_POST)
+            .where(CLUB_POST.clubsPostId.eq(clubPostId.id())
+                .and(CLUB_POST.clubsPostWriter.ne(targetUserId.id()))
+            )
+            .leftJoin(DEVICE).on(DEVICE.userId.eq(CLUB_POST.clubsPostWriter))
             .fetchOne();
-
-        return queryFactory.select(DEVICE.token)
-            .from(DEVICE)
-            .leftJoin(CLUB_USER).on(CLUB_USER.usersId.eq(DEVICE.userId))
-            .where(CLUB_USER.clubsId.eq(clubId)
-                .and(CLUB_USER.usersId.ne(exceptUserId))
-            )
-            .fetch();
+        tokens.add(token);
+        return tokens;
     }
 
-    public List<String> findClubAdminUsersDeviceTokens(Long clubId) {
-        return queryFactory.select(DEVICE.token)
-            .from(DEVICE)
-            .leftJoin(CLUB_USER).on(CLUB_USER.usersId.eq(DEVICE.userId))
-            .where(CLUB_USER.clubsId.eq(clubId)
-                .and(CLUB_USER.clubRole.eq(ClubsRole.ADMIN))
-            )
-            .fetch();
-    }
-
-    public List<String> findExerciseUsersDeviceTokens(Long exerciseId, Long exceptUserId) {
+    public List<DeviceEntity> findExerciseUsersDeviceTokens(Long exerciseId, Long exceptUserId) {
         List<Long> userIds = queryFactory.select(EXERCISE_USER.userId)
             .from(EXERCISE_USER)
             .where(EXERCISE_USER.exerciseId.eq(exerciseId)
@@ -89,7 +122,7 @@ public class DeviceQRepository {
         return findDeviceTokensByUsers(userIds);
     }
 
-    public List<String> findExerciseAdminUsersDeviceTokens(Long exerciseId) {
+    public List<DeviceEntity> findExerciseAdminUsersDeviceTokens(Long exerciseId) {
         List<Long> userIds = queryFactory.select(EXERCISE_USER.userId)
             .from(EXERCISE_USER)
             .where(EXERCISE_USER.exerciseId.eq(exerciseId)
@@ -99,8 +132,8 @@ public class DeviceQRepository {
         return findDeviceTokensByUsers(userIds);
     }
 
-    public List<String> findAll() {
-        return queryFactory.select(DEVICE.token)
+    public List<DeviceEntity> findAll() {
+        return queryFactory.select(DEVICE)
             .from(DEVICE)
             .where(DEVICE.isDel.eq(false))
             .fetch();
@@ -108,35 +141,25 @@ public class DeviceQRepository {
     }
 
     public List<NotificationEntity> mapToNotificationEntity(Notification notification) {
-        List<String> tokens = notification.getDeviceTokens().stream().map(DeviceToken::token).toList();
-        // fetchStream을 사용하여 스트림으로 처리
-        try (Stream<Tuple> resultStream = queryFactory.select(DEVICE.userId, DEVICE.token)
-            .from(DEVICE)
-            .where(DEVICE.isDel.eq(false)
-                .and(DEVICE.token.in(tokens))
-            )
-            .stream()) {
-            Map<Long, List<String>> groupBy = resultStream
-                .collect(Collectors.groupingBy(
-                    tuple -> tuple.get(DEVICE.userId),
-                    Collectors.mapping(tuple -> tuple.get(DEVICE.token), Collectors.toList())
-                ));
-
-            return groupBy.entrySet().stream()
-                .map(entry -> NotificationEntity.builder()
-                    .userId(entry.getKey())
-                    .deviceTokens(entry.getValue())
-                    .title(notification.getTitle().title())
-                    .body(notification.getBody().body())
-                    .domain(notification.getDomain())
-                    .domainId(notification.getDomainId().id())
-                    .isRead(false)
-                    .build())
-                .collect(Collectors.toList());
-        }
+        final var tokensByUser = notification.getDeviceTokens().stream()
+            .collect(Collectors.groupingBy(
+                DeviceToken::userId,
+                Collectors.mapping(DeviceToken::token, Collectors.toList())
+            ));
+        return tokensByUser.entrySet().stream()
+            .map(e -> NotificationEntity.builder()
+                .userId(e.getKey())
+                .deviceTokens(e.getValue())
+                .title(notification.getTitle().title())
+                .body(notification.getBody().body())
+                .code(notification.getCode())
+                .domainInfo(notification.getData().toString())
+                .isRead(false)
+                .build())
+            .collect(Collectors.toList());
     }
 
-    public List<String> findChatRoomUsersDeviceTokens(String chatRoomId) {
+    public List<DeviceEntity> findChatRoomUsersDeviceTokens(String chatRoomId) {
         List<Long> userIds = queryFactory.select(CHAT_ROOM_USER.userId)
             .from(CHAT_ROOM_USER)
             .where(CHAT_ROOM_USER.chatRoomId.eq(chatRoomId)

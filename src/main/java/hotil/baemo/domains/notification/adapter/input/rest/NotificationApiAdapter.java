@@ -28,17 +28,8 @@ public class NotificationApiAdapter {
     private final RetrieveNotificationUseCase retrieveNotificationUseCase;
     private final CommandNotificationUseCase commandNotificationUseCase;
 
-    @Operation(summary = "내 알림 목록 조회")
-    @GetMapping("/my")
-    public ResponseDTO<List<QNotificationDTO.NotificationList>> retrieveMyNotifications(
-        @AuthenticationPrincipal BaeMoUserDetails user
-    ) {
-        return ResponseDTO.ok(retrieveNotificationUseCase.retrieveMyNotifications(new UserId(user.userId()))
-        );
-    }
-
     @Operation(summary = "내 전체 알림 목록 조회(v2)")
-    @GetMapping("/my/v2")
+    @GetMapping("/my")
     public ResponseDTO<List<QNotificationDTO.NotificationList>> retrieveMyNotifications(
         @AuthenticationPrincipal BaeMoUserDetails user,
         @RequestParam(defaultValue = "0") int page,

@@ -11,7 +11,5 @@ public interface RetrieveNotificationUseCase {
 
     List<QNotificationDTO.NotificationList> retrieveMyUnReadNotifications(UserId userId, Pageable pageable);
 
-    List<QNotificationDTO.NotificationList> retrieveMyNotifications(UserId userId);
-
     List<QNotificationDTO.NotificationList> retrieveMyNotifications(UserId userId, Pageable pageable);
 }

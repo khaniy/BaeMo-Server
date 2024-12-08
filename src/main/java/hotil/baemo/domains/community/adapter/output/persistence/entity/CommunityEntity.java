@@ -32,13 +32,10 @@ public class CommunityEntity extends BaeMoBaseEntity {
     @NotBlank
     @Size(max = 3_000)
     private String content;
-    //    private String thumbnail;// TOOD
+
     @NotNull
     @PositiveOrZero
     private Long viewCount;
-    @NotNull
-    @PositiveOrZero
-    private Long likeCount;
 
     @NotNull
     private Boolean isDelete;
@@ -54,7 +51,6 @@ public class CommunityEntity extends BaeMoBaseEntity {
         this.title = title;
         this.content = content;
         this.viewCount = viewCount == null ? 0L : viewCount;
-        this.likeCount = likeCount == null ? 0L : likeCount;
         this.isDelete = isDelete != null && isDelete;
     }
 
@@ -76,5 +72,9 @@ public class CommunityEntity extends BaeMoBaseEntity {
 
     public void delete() {
         this.isDelete = true;
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
     }
 }

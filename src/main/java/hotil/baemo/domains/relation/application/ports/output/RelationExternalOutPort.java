@@ -11,4 +11,5 @@ public interface RelationExternalOutPort {
     UserId getUserByUserCode(UserCode userCode, UserName userName);
 
     List<QRelationDTO.FindFriends> findFriend(UserId userId, UserCode userCode);
+    List<QRelationDTO.ApplyFriendsListView> getApplyFriends(UserId userId);
 }

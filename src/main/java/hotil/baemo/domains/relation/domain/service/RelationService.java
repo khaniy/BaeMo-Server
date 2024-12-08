@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface RelationService {
 
     Optional<Relation> getRelation(UserId userId, UserId targetId);
+    Optional<Relation> getMutualRelation(UserId userId, UserId targetId);
 
     void delete(Relation relation);
 }

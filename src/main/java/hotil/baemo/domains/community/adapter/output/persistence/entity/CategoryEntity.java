@@ -1,5 +1,8 @@
 package hotil.baemo.domains.community.adapter.output.persistence.entity;
 
+import hotil.baemo.domains.community.adapter.output.persistence.mapper.CategoryMapper;
+import hotil.baemo.domains.community.domain.entity.CommunityUserId;
+import hotil.baemo.domains.community.domain.value.CategoryList;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +15,6 @@ import static lombok.AccessLevel.PROTECTED;
 @Table(name = "tb_community_category")
 @NoArgsConstructor(access = PROTECTED)
 public class CategoryEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +25,12 @@ public class CategoryEntity {
     private Boolean isClubsPromotion;
     private Boolean isPartnerRecruitment;
     private Boolean isCompetitionNotice;
+
+    public static CategoryEntity init(CommunityUserId communityUserId) {
+        return CategoryEntity.builder()
+            .userId(communityUserId.id())
+            .build();
+    }
 
     @Builder
     public CategoryEntity(Long id, Long userId, Boolean isDaily, Boolean isExerciseRecruitment, Boolean isClubsPromotion, Boolean isPartnerRecruitment, Boolean isCompetitionNotice) {
@@ -36,10 +44,14 @@ public class CategoryEntity {
     }
 
     public void update(CategoryEntity categoryEntity) {
-        this.isDaily = categoryEntity.getIsDaily();
-        this.isExerciseRecruitment = categoryEntity.getIsExerciseRecruitment();
-        this.isClubsPromotion = categoryEntity.getIsClubsPromotion();
-        this.isPartnerRecruitment = categoryEntity.getIsPartnerRecruitment();
-        this.isCompetitionNotice = categoryEntity.getIsCompetitionNotice();
+        this.isDaily = categoryEntity.getIsDaily() != null && getIsDaily();
+        this.isExerciseRecruitment = categoryEntity.getIsExerciseRecruitment() != null && getIsExerciseRecruitment();
+        this.isClubsPromotion = categoryEntity.getIsClubsPromotion() != null && getIsClubsPromotion();
+        this.isPartnerRecruitment = categoryEntity.getIsPartnerRecruitment() != null && getIsPartnerRecruitment();
+        this.isCompetitionNotice = categoryEntity.getIsCompetitionNotice() != null && getIsCompetitionNotice();
+    }
+
+    public CategoryList getCategoryList() {
+        return CategoryMapper.convert(this);
     }
 }

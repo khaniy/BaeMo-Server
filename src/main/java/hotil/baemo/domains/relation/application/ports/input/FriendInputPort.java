@@ -1,10 +1,15 @@
 package hotil.baemo.domains.relation.application.ports.input;
 
+import java.util.Optional;
+
+
 import hotil.baemo.domains.relation.application.ports.output.CommandRelationOutputPort;
 import hotil.baemo.domains.relation.application.ports.output.RelationEventOutPort;
 import hotil.baemo.domains.relation.application.ports.output.RelationExternalOutPort;
 import hotil.baemo.domains.relation.application.usecases.AddFriendUseCase;
+import hotil.baemo.domains.relation.application.usecases.ApproveFriendUseCase;
 import hotil.baemo.domains.relation.application.usecases.DeleteFriendUseCase;
+import hotil.baemo.domains.relation.application.usecases.RefuseFriendUseCase;
 import hotil.baemo.domains.relation.domain.aggregate.Relation;
 import hotil.baemo.domains.relation.domain.policy.RelationPolicy;
 import hotil.baemo.domains.relation.domain.specification.FriendSpecification;
@@ -19,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class FriendInputPort implements AddFriendUseCase, DeleteFriendUseCase {
+public class FriendInputPort implements AddFriendUseCase, DeleteFriendUseCase, ApproveFriendUseCase,
+    RefuseFriendUseCase {
     private final CommandRelationOutputPort commandRelationOutputPort;
     private final RelationExternalOutPort relationExternalOutPort;
     private final RelationPolicy relationPolicy;
@@ -30,6 +36,7 @@ public class FriendInputPort implements AddFriendUseCase, DeleteFriendUseCase {
         relationPolicy.checkFriendPolicy(userId, targetId);
         Relation relation = FriendSpecification.spec().addFriend(userId, targetId);
         commandRelationOutputPort.save(relation);
+        relationEventOutPort.friendRequest(userId,targetId); //친구 신청
     }
 
     @Override
@@ -38,6 +45,7 @@ public class FriendInputPort implements AddFriendUseCase, DeleteFriendUseCase {
         relationPolicy.checkFriendPolicy(userId, targetId);
         Relation relation = FriendSpecification.spec().addFriend(userId, targetId);
         commandRelationOutputPort.save(relation);
+        relationEventOutPort.friendRequest(userId,targetId); //친구 신청
     }
 
     @Override
@@ -45,6 +53,24 @@ public class FriendInputPort implements AddFriendUseCase, DeleteFriendUseCase {
         Relation relation = commandRelationOutputPort.getRelation(relationId, userId);
         FriendSpecification.spec().deleteFriend(userId, relation);
         commandRelationOutputPort.delete(relation);
-        relationEventOutPort.friendDeleted(relation);
+    }
+
+
+    @Override
+    public void approveFriend(UserId userId, UserId targetId) {
+        // 친구 신청 관계 있는지 체크
+        Optional<Relation> userExistingRelation = commandRelationOutputPort.getMutualRelation(targetId, userId);
+        Relation updatedExistingRelation = userExistingRelation.get().withStatusConfirm();
+        commandRelationOutputPort.save(updatedExistingRelation);
+        //승인 알림 전송
+        relationEventOutPort.friendRequestApproved(userId,targetId);
+
+    }
+
+    @Override
+    public void refuseFriend(UserId userId, UserId targetId) {
+        Optional<Relation> relation = commandRelationOutputPort.getMutualRelation(targetId,userId);
+        Relation updatedExistingRelation = relation.get().withStatusRefuse();
+        commandRelationOutputPort.save(updatedExistingRelation);
     }
 }

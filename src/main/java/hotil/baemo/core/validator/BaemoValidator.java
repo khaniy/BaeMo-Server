@@ -16,6 +16,10 @@ public abstract class BaemoValidator<T> {
         VALIDATOR = factory.getValidator();
     }
 
+//    protected BaemoValidator() {
+//        valid();
+//    }
+
     protected void valid() {
         final var violations = VALIDATOR.validate((T) this);
 

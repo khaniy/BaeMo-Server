@@ -11,9 +11,8 @@ import hotil.baemo.core.common.response.ResponseDTO;
 import hotil.baemo.core.security.jwt.authentication.BaeMoUserDetails;
 import hotil.baemo.domains.chat.adapter.event.dto.ChatRoomDTO;
 import hotil.baemo.domains.chat.adapter.input.rest.annotation.ChatApi;
-import hotil.baemo.domains.chat.application.usecase.command.CreateChatRoomUseCase;
 import hotil.baemo.domains.chat.application.usecase.command.DeleteChatRoomUseCase;
-import hotil.baemo.domains.chat.application.usecase.command.UpdateChatRoomUseCase;
+import hotil.baemo.domains.chat.application.usecase.command.dm.CreateDMChatUseCase;
 import hotil.baemo.domains.chat.domain.value.room.ChatRoomId;
 import hotil.baemo.domains.chat.domain.value.room.TargetId;
 import hotil.baemo.domains.chat.domain.value.user.UserId;
@@ -28,13 +27,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/chat")
 public class CommandChatRoomApiAdapter {
 
-	private final CreateChatRoomUseCase createChatRoomUseCase;
+	// private final CreateChatRoomUseCase createChatRoomUseCase;
+	private final CreateDMChatUseCase createDMChatUseCase;
 	private final DeleteChatRoomUseCase deleteChatRoomUseCase;
 
 	@Operation(summary = "채팅방 생성 API")
 	@PostMapping("/{targetId}")
-	public ResponseDTO<ChatRoomDTO.CreateChatRoomDTO> createDMChatRoom(@AuthenticationPrincipal BaeMoUserDetails user, @PathVariable(name="targetId") Long targetId) {
-		return ResponseDTO.ok(createChatRoomUseCase.createChatRoom(
+	public ResponseDTO<ChatRoomDTO.CreateChatRoomDTO> createDMChatRoom(@AuthenticationPrincipal BaeMoUserDetails user,
+		@PathVariable(name="targetId") Long targetId) {
+		return ResponseDTO.ok(createDMChatUseCase.createDMChatRoom(
 			new UserId(user.userId()),
 			new TargetId(targetId)));
 	}

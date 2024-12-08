@@ -12,7 +12,7 @@ import hotil.baemo.domains.notification.application.port.output.MessagingOutPort
 import hotil.baemo.domains.notification.application.port.output.QueryChatOutPort;
 import hotil.baemo.domains.notification.application.port.output.QueryDeviceOutPort;
 import hotil.baemo.domains.notification.application.usecase.NotifyChatMessageUseCase;
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
 import hotil.baemo.domains.notification.domains.spec.chat.ChatNotificationSpecification;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,7 @@ public class NotifyChatInputPort implements NotifyChatMessageUseCase {
 	public void notifyCreationToUsers(ChatRoomId chatRoomId, ChatContent chatMessage, UserId userId) {
 		List<DeviceToken> deviceTokens = queryDeviceOutPort.getChatUsersDeviceTokens(chatRoomId);
 		ChatRoomName roomName = queryChatOutPort.getChatRoomName(chatRoomId,userId);
-		Notification notification = ChatNotificationSpecification.chatMessageCreated(deviceTokens, roomName,
-			chatMessage);
+		Notification notification = ChatNotificationSpecification.chatMessageCreated(deviceTokens, chatRoomId, roomName, chatMessage);
 		messagingOutPort.sendMessage(notification);
 	}
 }

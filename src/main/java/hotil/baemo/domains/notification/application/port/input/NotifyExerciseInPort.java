@@ -2,8 +2,9 @@ package hotil.baemo.domains.notification.application.port.input;
 
 import hotil.baemo.domains.notification.application.port.output.*;
 import hotil.baemo.domains.notification.application.usecase.NotifyExerciseUseCase;
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
 import hotil.baemo.domains.notification.domains.spec.exercise.ExerciseNotificationSpecification;
+import hotil.baemo.domains.notification.domains.value.club.ClubId;
 import hotil.baemo.domains.notification.domains.value.club.ClubTitle;
 import hotil.baemo.domains.notification.domains.value.exercise.*;
 import hotil.baemo.domains.notification.domains.value.notification.DeviceToken;
@@ -28,54 +29,36 @@ public class NotifyExerciseInPort implements NotifyExerciseUseCase {
 
 
     @Override
-    public void notifyCreationToClubUsers(
+    public void notifyCreationToClubMembers(
         ExerciseId exerciseId,
+        ClubId clubId,
         ExerciseTitle exerciseTitle,
         ExerciseLocation exerciseLocation,
         ExerciseTime time,
         UserId createUserId
     ) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getClubUsersDeviceTokens(exerciseId, createUserId);
-        ClubTitle clubTitle = queryClubOutPort.getClubTitle(exerciseId);
-        Notification notification = ExerciseNotificationSpecification.exerciseCreated(exerciseId, deviceTokens, clubTitle, exerciseTitle, exerciseLocation, time);
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getClubMembersDeviceTokens(clubId, createUserId);
+        ClubTitle clubTitle = queryClubOutPort.getClubTitle(clubId);
+        Notification notification = ExerciseNotificationSpecification.exerciseCreated(exerciseId, clubId, deviceTokens, clubTitle, exerciseTitle, exerciseLocation, time);
         messagingOutPort.sendMessage(notification);
         notificationOutPort.saveNotification(notification);
     }
 
     @Override
-    public void notifyDeletionToExerciseUsers(
+    public void notifyApplyingToAdmin(
         ExerciseId exerciseId,
+        ClubId clubId,
         ExerciseTitle exerciseTitle,
-        UserId deleteUserId
+        ExerciseType exerciseType,
+        UserId applyUserId,
+        UserId targetUserId
     ) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseUsersDeviceTokens(exerciseId, deleteUserId);
-        Notification notification = ExerciseNotificationSpecification.exerciseDeleted(exerciseId, deviceTokens, exerciseTitle);
-        messagingOutPort.sendMessage(notification);
-        notificationOutPort.saveNotification(notification);
-    }
-
-    @Override
-    public void notifyParticipationToExerciseUsers(
-        ExerciseId exerciseId,
-        ExerciseTitle exerciseTitle,
-        ExerciseUserStatus exerciseUserStatus,
-        UserId participantUserId
-    ) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseUsersDeviceTokens(exerciseId, participantUserId);
-        UserName participantName = queryUserOutPort.getUserName(participantUserId);
-        Notification notification = ExerciseNotificationSpecification.exerciseUserParticipated(exerciseId, deviceTokens, exerciseTitle, participantName);
-        messagingOutPort.sendMessage(notification);
-        notificationOutPort.saveNotification(notification);
-    }
-    @Override
-    @Transactional
-    public void notifyApplyingToExerciseAdminUsers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, ExerciseType exerciseType, UserId applyUserId, UserId targetUserId) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseAdminUsersDeviceTokens(exerciseId);
-        UserName targetUserName = queryUserOutPort.getUserName(targetUserId);
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseAdminsDeviceTokens(exerciseId);
         UserName applyUserName = queryUserOutPort.getUserName(applyUserId);
+        UserName targetUserName = queryUserOutPort.getUserName(targetUserId);
         Notification notification = switch (exerciseType) {
             case CLUB ->
-                ExerciseNotificationSpecification.exerciseGuestApplied(exerciseId, deviceTokens, exerciseTitle, applyUserName, targetUserName);
+                ExerciseNotificationSpecification.exerciseGuestApplied(exerciseId, clubId, deviceTokens, exerciseTitle, applyUserName, targetUserName, false);
 
             case IMPROMPTU ->
                 ExerciseNotificationSpecification.exerciseParticipationApplied(exerciseId, deviceTokens, exerciseTitle, targetUserName);
@@ -85,40 +68,83 @@ public class NotifyExerciseInPort implements NotifyExerciseUseCase {
     }
 
     @Override
-    public void notifyApprovalToExerciseUser(
+    public void notifyApplyingToGuest(ExerciseId exerciseId, ClubId clubId, ExerciseTitle exerciseTitle, ExerciseType exerciseType, UserId applyUserId, UserId targetUserId) {
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getUserDeviceTokens(targetUserId);
+        UserName applyUserName = queryUserOutPort.getUserName(applyUserId);
+        UserName targetUserName = queryUserOutPort.getUserName(targetUserId);
+        if(exerciseType.equals(ExerciseType.CLUB)) {
+            Notification notification = ExerciseNotificationSpecification.exerciseGuestApplied(exerciseId, clubId, deviceTokens, exerciseTitle, applyUserName, targetUserName, true);
+            messagingOutPort.sendMessage(notification);
+            notificationOutPort.saveNotification(notification);
+        }
+    }
+
+    @Override
+    public void notifyParticipationToAdmin(
         ExerciseId exerciseId,
+        ClubId clubId,
+        ExerciseTitle exerciseTitle,
+        ExerciseUserStatus exerciseUserStatus,
+        UserId participantUserId
+    ) {
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseAdminsDeviceTokens(exerciseId);
+        UserName participantName = queryUserOutPort.getUserName(participantUserId);
+        Notification notification = ExerciseNotificationSpecification.exerciseUserParticipated(exerciseId, clubId, deviceTokens, exerciseUserStatus, exerciseTitle, participantName);
+        messagingOutPort.sendMessage(notification);
+        notificationOutPort.saveNotification(notification);
+    }
+
+
+    @Override
+    public void notifyApprovalToMember(
+        ExerciseId exerciseId,
+        ClubId clubId,
         ExerciseTitle exerciseTitle,
         ExerciseUserStatus exerciseUserStatus,
         UserId approverUserId
     ) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getDeviceTokenByUserId(approverUserId);
-        Notification notification = ExerciseNotificationSpecification.exerciseUserApproved(exerciseId, deviceTokens, exerciseTitle, exerciseUserStatus);
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getUserDeviceTokens(approverUserId);
+        Notification notification = ExerciseNotificationSpecification.exerciseUserApproved(exerciseId, clubId, deviceTokens, exerciseTitle, exerciseUserStatus);
         messagingOutPort.sendMessage(notification);
         notificationOutPort.saveNotification(notification);
     }
 
     @Override
-    public void notifyCancellationToExerciseAdminUsers(
+    public void notifyLeftToAdmin(
         ExerciseId exerciseId,
+        ClubId clubId,
         ExerciseTitle exerciseTitle,
         UserId cancelUserId
     ) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseAdminUsersDeviceTokens(exerciseId);
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseAdminsDeviceTokens(exerciseId);
         UserName userName = queryUserOutPort.getUserName(cancelUserId);
-        Notification notification = ExerciseNotificationSpecification.exerciseUserCancelled(exerciseId, deviceTokens, exerciseTitle, userName);
+        Notification notification = ExerciseNotificationSpecification.exerciseUserLeft(exerciseId, clubId, deviceTokens, exerciseTitle, userName);
         messagingOutPort.sendMessage(notification);
         notificationOutPort.saveNotification(notification);
     }
 
     @Override
-    public void notifyExpellationToExerciseUser(
+    public void notifyExpellationToMember(
         ExerciseId exerciseId,
+        ClubId clubId,
         ExerciseTitle exerciseTitle,
         UserId expelledUserId
     ) {
-        List<DeviceToken> deviceTokens = queryDeviceOutPort.getDeviceTokenByUserId(expelledUserId);
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getUserDeviceTokens(expelledUserId);
         UserName userName = queryUserOutPort.getUserName(expelledUserId);
-        Notification notification = ExerciseNotificationSpecification.exerciseUserExpelled(exerciseId, deviceTokens, exerciseTitle, userName);
+        Notification notification = ExerciseNotificationSpecification.exerciseUserExpelled(exerciseId, clubId, deviceTokens, exerciseTitle, userName);
+        messagingOutPort.sendMessage(notification);
+        notificationOutPort.saveNotification(notification);
+    }
+
+    @Override
+    public void notifyDeletionToMembers(
+        ExerciseId exerciseId,
+        ExerciseTitle exerciseTitle,
+        UserId deleteUserId
+    ) {
+        List<DeviceToken> deviceTokens = queryDeviceOutPort.getExerciseMembersDeviceTokens(exerciseId, deleteUserId);
+        Notification notification = ExerciseNotificationSpecification.exerciseDeleted(exerciseId, deviceTokens, exerciseTitle);
         messagingOutPort.sendMessage(notification);
         notificationOutPort.saveNotification(notification);
     }

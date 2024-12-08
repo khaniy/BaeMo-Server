@@ -1,6 +1,6 @@
 package hotil.baemo.domains.notification.application.port.output;
 
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
 
 public interface MessagingOutPort {
 

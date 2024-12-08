@@ -6,8 +6,8 @@ import hotil.baemo.domains.community.domain.value.CategoryList;
 import hotil.baemo.domains.community.domain.value.CommunityCategory;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 import static hotil.baemo.domains.community.domain.value.CommunityCategory.*;
 import static lombok.AccessLevel.PRIVATE;
@@ -27,23 +27,35 @@ public final class CategoryMapper {
     }
 
     public static CategoryList convert(final CategoryEntity categoryEntity) {
-        final Map<BooleanSupplier, CommunityCategory> conditions = createConditions(categoryEntity);
-
-        final var result = conditions.entrySet().stream()
-            .filter(e -> e.getKey().getAsBoolean())
-            .map(e -> e.getValue().name())
+        final var list = createConditions(categoryEntity).stream()
+            .filter(Map.Entry::getKey)
+            .map(Map.Entry::getValue)
             .toList();
 
-        return CategoryList.getInstanceFromString(result);
+        return CategoryList.of(list);
     }
 
-    private static Map<BooleanSupplier, CommunityCategory> createConditions(final CategoryEntity categoryEntity) {
-        return Map.of(
-            categoryEntity::getIsDaily, DAILY,
-            categoryEntity::getIsClubsPromotion, CLUB_PROMOTION,
-            categoryEntity::getIsPartnerRecruitment, PARTNER_RECRUITMENT,
-            categoryEntity::getIsExerciseRecruitment, EXERCISE_RECRUITMENT,
-            categoryEntity::getIsCompetitionNotice, COMPETITION_NOTICE
+    private static List<Map.Entry<Boolean, CommunityCategory>> createConditions(final CategoryEntity categoryEntity) {
+        if (categoryEntity == null) {
+            return nullConditions();
+        }
+
+        return List.of(
+            Map.entry(categoryEntity.getIsDaily() != null && categoryEntity.getIsDaily(), DAILY),
+            Map.entry(categoryEntity.getIsExerciseRecruitment() != null && categoryEntity.getIsExerciseRecruitment(), EXERCISE_RECRUITMENT),
+            Map.entry(categoryEntity.getIsClubsPromotion() != null && categoryEntity.getIsClubsPromotion(), CLUB_PROMOTION),
+            Map.entry(categoryEntity.getIsPartnerRecruitment() != null && categoryEntity.getIsPartnerRecruitment(), PARTNER_RECRUITMENT),
+            Map.entry(categoryEntity.getIsCompetitionNotice() != null && categoryEntity.getIsCompetitionNotice(), COMPETITION_NOTICE)
+        );
+    }
+
+    private static List<Map.Entry<Boolean, CommunityCategory>> nullConditions() {
+        return List.of(
+            Map.entry(false, DAILY),
+            Map.entry(false, EXERCISE_RECRUITMENT),
+            Map.entry(false, CLUB_PROMOTION),
+            Map.entry(false, PARTNER_RECRUITMENT),
+            Map.entry(false, COMPETITION_NOTICE)
         );
     }
 }

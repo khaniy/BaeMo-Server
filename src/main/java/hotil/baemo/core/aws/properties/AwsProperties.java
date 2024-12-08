@@ -12,14 +12,14 @@ final class AwsProperties {
     private String accessKey;
     @Value("${aws.secretKey}")
     private String secretKey;
-    @Value("${aws.endpointUrl}")
-    private String endpointUrl;
     @Value("${aws.region}")
     private String region;
     @Value("${aws.bucketName}")
     private String bucketName;
-    @Value("${aws.accessUrl}")
-    private String accessUrl;
+    @Value("${aws.accessOriginUrl}")
+    private String accessOriginUrl;
+    @Value("${aws.accessResizeUrl}")
+    private String accessResizeUrl;
     @Value("${spring.profiles.active}")
     private String env;
 }

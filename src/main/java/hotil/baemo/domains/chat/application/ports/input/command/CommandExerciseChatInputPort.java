@@ -20,8 +20,10 @@ import hotil.baemo.domains.chat.domain.value.room.ChatRoomType;
 import hotil.baemo.domains.chat.domain.value.exercise.ExerciseId;
 import hotil.baemo.domains.chat.domain.value.user.UserId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CommandExerciseChatInputPort implements CreateExerciseChatUseCase, UpdateExerciseChatUseCase,
 	DeleteExerciseChatUseCase {

@@ -1,5 +1,6 @@
 package hotil.baemo.core.aws.properties;
 
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -20,9 +21,12 @@ import java.time.Duration;
 public class AwsProvider {
     private final String bucketName;
     private final Region region;
-    private final String endpointUrl;
+    @Getter
     private final String env;
-    private final String accessUrl;
+    @Getter
+    private final String accessOriginUrl;
+    @Getter
+    private final String accessResizeUrl;
 
     private final StaticCredentialsProvider credentialsProvider;
     private final S3Configuration defaultConfig;
@@ -30,9 +34,9 @@ public class AwsProvider {
     public AwsProvider(AwsProperties awsProperties) {
         this.bucketName = awsProperties.getBucketName();
         this.env = awsProperties.getEnv();
-        this.accessUrl = awsProperties.getAccessUrl();
+        this.accessOriginUrl = awsProperties.getAccessOriginUrl();
+        this.accessResizeUrl = awsProperties.getAccessResizeUrl();
         this.region = Region.of(awsProperties.getRegion());
-        this.endpointUrl = awsProperties.getEndpointUrl();
         this.credentialsProvider = StaticCredentialsProvider.create(
             AwsBasicCredentials.create(awsProperties.getAccessKey(), awsProperties.getSecretKey())
         );
@@ -42,14 +46,14 @@ public class AwsProvider {
     public String createPutPreSignedUrl(final String keyName, final Duration signatureDuration) {
         try (final var s3Presigner = S3Presigner.builder()
             .region(region)
-            .endpointOverride(URI.create(endpointUrl))
+            .endpointOverride(URI.create("https://s3." + region.id() + ".amazonaws.com"))
             .credentialsProvider(credentialsProvider)
             .serviceConfiguration(defaultConfig)
             .build()) {
 
             final var putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(env + "/" + keyName)
+                .key(keyName)
                 .build();
 
             final var putObjectPresignRequest = PutObjectPresignRequest.builder()
@@ -65,24 +69,20 @@ public class AwsProvider {
     public void putObject(String keyName, MultipartFile file) {
         try {
             S3Client s3Client = S3Client.builder()
-                .endpointOverride(URI.create(endpointUrl))
                 .region(region)
+                .endpointOverride(URI.create("https://s3." + region.id() + ".amazonaws.com"))
                 .credentialsProvider(credentialsProvider)
                 .serviceConfiguration(defaultConfig)
                 .build();
             final var putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
-                .key(env + "/" + keyName)
+                .key(keyName)
                 .build();
             RequestBody rb = getFileRequestBody(file);
             s3Client.putObject(putObjectRequest, rb);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public String getSavedUrl(final String keyName) {
-        return String.join("/", accessUrl, env, keyName);
     }
 
     private RequestBody getFileRequestBody(MultipartFile file) throws IOException {

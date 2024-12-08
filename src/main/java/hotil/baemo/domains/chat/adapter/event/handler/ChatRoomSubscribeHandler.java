@@ -3,7 +3,8 @@ package hotil.baemo.domains.chat.adapter.event.handler;
 import org.springframework.stereotype.Service;
 
 import hotil.baemo.domains.chat.adapter.output.repository.memory.ChatRedisRepository;
-import hotil.baemo.domains.chat.application.ports.input.command.CommandDMChatInputPort;
+import hotil.baemo.domains.chat.application.ports.input.command.dm.UpdateChatRoomInputPort;
+
 import hotil.baemo.domains.chat.application.ports.output.port.CommandChatRoomUserOutPort;
 import hotil.baemo.domains.chat.application.usecase.command.SubscribeChatUseCase;
 import hotil.baemo.domains.chat.application.usecase.command.message.UpdateChatMessageReadCountUseCase;
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatRoomSubscribeHandler {
 	private final CommandChatRoomUserOutPort chatRoomUserOutPort;
-	private final CommandDMChatInputPort commandDMChatInputPort;
+	private final UpdateChatRoomInputPort updateChatRoomInputPort;
 	private final ChatRedisRepository chatRedisRepository;
 	private final UpdateChatMessageReadCountUseCase updateChatMessageReadCountUseCase;
 	private final SubscribeChatUseCase subscribeChatUseCase;
@@ -41,7 +42,7 @@ public class ChatRoomSubscribeHandler {
 
 	//구독 정보 redis에 저장
 	public void updateChatRoom(ChatRoomId chatRoomId, UserId userId) {
-		commandDMChatInputPort.updateChatRoom(chatRoomId,userId);
+		updateChatRoomInputPort.updateChatRoom(chatRoomId,userId);
 	}
 
 	//chatRoomStatus 상태 subscribe 변경

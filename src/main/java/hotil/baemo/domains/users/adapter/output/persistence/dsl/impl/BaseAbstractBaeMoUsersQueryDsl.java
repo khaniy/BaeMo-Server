@@ -2,14 +2,14 @@ package hotil.baemo.domains.users.adapter.output.persistence.dsl.impl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hotil.baemo.domains.users.adapter.output.persistence.dsl.BaseAbstractBaeMoUsersJpaRepository;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.QAbstractBaeMoUsersEntity;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.QUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class BaseAbstractBaeMoUsersQueryDsl implements BaseAbstractBaeMoUsersJpaRepository {
-    private static final QAbstractBaeMoUsersEntity USER = QAbstractBaeMoUsersEntity.abstractBaeMoUsersEntity;
+    private static final QUserEntity USER = QUserEntity.userEntity;
     private final JPAQueryFactory factory;
 
     @Override

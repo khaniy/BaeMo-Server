@@ -5,8 +5,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hotil.baemo.core.common.response.ResponseCode;
 import hotil.baemo.core.common.response.exception.CustomException;
+import hotil.baemo.domains.relation.adapter.output.persistence.entity.QRelationEntity;
 import hotil.baemo.domains.relation.application.dto.QRelationDTO;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.QAbstractBaeMoUsersEntity;
+import hotil.baemo.domains.relation.domain.value.RelationStatus;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.QUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,8 @@ import java.util.List;
 public class RelationExternalQuery {
 
     private final JPAQueryFactory queryFactory;
-    private static final QAbstractBaeMoUsersEntity USER = QAbstractBaeMoUsersEntity.abstractBaeMoUsersEntity;
+    private static final QUserEntity USER = QUserEntity.userEntity;
+    private static final QRelationEntity RELATION = QRelationEntity.relationEntity;
 
     public List<QRelationDTO.FindFriends> getUserByUserCode(String userCode) {
         final var user = queryFactory.select(constructor())
@@ -69,4 +72,27 @@ public class RelationExternalQuery {
         );
     }
 
+    private FactoryExpressionBase<QRelationDTO.ApplyFriendsListView> applyConstructor() {
+        return Projections.constructor(QRelationDTO.ApplyFriendsListView.class,
+            RELATION.id,
+            USER.id,
+            USER.realName,
+            USER.profileImage,
+            USER.description
+        );
+    }
+
+
+    public List<QRelationDTO.ApplyFriendsListView> getApplyFriends(Long userId) {
+        return queryFactory
+            .select(applyConstructor())
+            .from(RELATION)
+            .join(USER).on(RELATION.userId.eq(USER.id))  // USER 테이블과 조인
+            .where(RELATION.targetId.eq(userId)
+                .and(RELATION.isDel.eq(false))
+                .and(RELATION.status.eq(RelationStatus.PENDING)) //친구 대기중인 유저들만
+                .and(USER.isDel.eq(false))  // 삭제되지 않은 유저만
+            )
+            .fetch();
+    }
 }

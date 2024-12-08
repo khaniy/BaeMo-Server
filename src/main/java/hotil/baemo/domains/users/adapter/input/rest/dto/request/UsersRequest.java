@@ -1,17 +1,15 @@
 package hotil.baemo.domains.users.adapter.input.rest.dto.request;
 
 import hotil.baemo.domains.users.domain.value.credential.JoinType;
-import hotil.baemo.domains.users.domain.value.information.BadmintonExperience;
 import hotil.baemo.domains.users.domain.value.information.Gender;
 import hotil.baemo.domains.users.domain.value.information.Level;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static hotil.baemo.domains.users.domain.specification.BaeMoUsersRegexSpecification.*;
 
@@ -50,8 +48,8 @@ public interface UsersRequest {
         @Pattern(regexp = REAL_NAME, message = "이름 형식이 올바르지 않습니다.")
         String realName,
 
-        @Past(message = "생일이 올바르지 않습니다.")
-        LocalDate birth,
+//        @Past(message = "생일이 올바르지 않습니다.")
+//        LocalDate birth,
 
         @NotNull(message = "급수를 기입해 주세요.")
         Level level,
@@ -59,7 +57,7 @@ public interface UsersRequest {
         @NotNull(message = "성별을 기입해 주세요.")
         Gender gender,
 
-        @NotNull(message = "필수 약관 동의가 올바르지 않습니다.")
+        @NotNull(message = "필수 약관을 동의해주세요.")
         Boolean requiredTerms,
 
         @Length(max = 20, message = "소개글은 20자 이내로 작성 가능합니다.")
@@ -86,8 +84,8 @@ public interface UsersRequest {
         String realName,
 
 //        @NotNull(message = "생일은 빈칸일 수 없습니다.")
-        @Past(message = "생일이 올바르지 않습니다.")
-        LocalDate birth,
+//        @Past(message = "생일이 올바르지 않습니다.")
+//        LocalDate birth,
 
         @NotNull(message = "급수를 기입해 주세요.")
         Level level,
@@ -95,7 +93,7 @@ public interface UsersRequest {
         @NotNull(message = "성별은 빈칸일 수 없습니다.")
         Gender gender,
 
-        @NotNull(message = "필수 약관 동의가 올바르지 않습니다.")
+        @NotNull(message = "필수 약관을 동의 해주세요.")
         Boolean requiredTerms,
 
         @Length(max = 20, message = "소개글은 20자 이내로 작성 가능합니다.")
@@ -113,8 +111,8 @@ public interface UsersRequest {
         Level level,
 
 //        @NotNull(message = "생일은 빈칸일 수 없습니다.")
-        @Past(message = "생일이 올바르지 않습니다.")
-        LocalDate birth,
+//        @Past(message = "생일이 올바르지 않습니다.")
+//        LocalDate birth,
 
         @NotNull(message = "성별은 빈칸일 수 없습니다.")
         Gender gender,
@@ -122,11 +120,39 @@ public interface UsersRequest {
         @Length(max = 20, message = "소개글은 20자 이내로 작성 가능합니다.")
         String description,
 
-        @NotBlank(message = "별명은 빈칸일 수 없습니다.")
-        @Length(max = 10, message = "별명은 10자 이내로 작성 가능합니다.")
-        String nickName
+//        @NotBlank(message = "별명은 빈칸일 수 없습니다.")
+//        @Length(max = 10, message = "별명은 10자 이내로 작성 가능합니다.")
+//        String nickName,
+
+//        @NotNull(message = "지역 정보는 빈칸일 수 없습니다.")
+        @Size(max = 3, message = "지역 정보는 최대 3개까지 가능합니다.")
+        List<LocationDTO> locations
     ) implements UsersRequest {
     }
 
+    @Builder
+    record UpdateInfoForJoinDTO(
+        @NotBlank(message = "내 소개글은 빈칸일 수 없습니다.")
+        @Length(max = 20, message = "소개글은 20자 이내로 작성 가능합니다.")
+        String description,
 
+//        @NotBlank(message = "별명은 빈칸일 수 없습니다.")
+//        @Length(max = 10, message = "별명은 10자 이내로 작성 가능합니다.")
+//        String nickName,
+
+//        @NotNull(message = "지역 정보는 빈칸일 수 없습니다.")
+        @Size(max = 3, message = "지역 정보는 최대 3개까지 가능합니다.")
+        List<LocationDTO> locations
+
+    ) implements UsersRequest {
+    }
+
+    record LocationDTO(
+        @NotBlank
+        @Pattern(regexp = "^[0-9]{10}$", message = "지역 코드는 10자리 숫자여야 합니다.")
+        String code,
+        @NotBlank
+        String location
+    )implements UsersRequest {
+    }
 }

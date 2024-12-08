@@ -17,12 +17,9 @@ public class TotalSearchRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Value("${spring.profiles.active}")
-    private String env;
-
     public List searchByKeyword(String keyword) {
         String sql = "SELECT DISTINCT id, title, domain " +
-            "FROM " + env + ".vw_total_search " +
+            "FROM vw_total_search " +
             "WHERE to_tsvector('public.korean', title) @@ to_tsquery('public.korean', :keyword)";
 
         Query query = entityManager.createNativeQuery(sql, TotalSearchEntity.class);

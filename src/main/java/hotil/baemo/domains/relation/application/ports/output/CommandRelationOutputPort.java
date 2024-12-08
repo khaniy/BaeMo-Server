@@ -12,6 +12,5 @@ public interface CommandRelationOutputPort extends RelationService {
 
     Relation getRelation(RelationId id, UserId userId);
 
-
     void delete(Relation relation);
 }

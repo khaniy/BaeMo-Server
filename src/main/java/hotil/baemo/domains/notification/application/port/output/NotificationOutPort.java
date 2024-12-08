@@ -1,7 +1,7 @@
 package hotil.baemo.domains.notification.application.port.output;
 
 import hotil.baemo.domains.notification.application.dto.QNotificationDTO;
-import hotil.baemo.domains.notification.domains.aggregate.Notification;
+import hotil.baemo.domains.notification.domains.entity.Notification;
 import hotil.baemo.domains.notification.domains.value.notification.NotificationId;
 import hotil.baemo.domains.notification.domains.value.user.UserId;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +17,6 @@ public interface NotificationOutPort {
     void updateNotificationsRead(UserId userId);
 
     void saveNotification(Notification notification);
-
-    List<QNotificationDTO.NotificationList> getMyNotifications(UserId userId);
 
     List<QNotificationDTO.NotificationList> getMyNotifications(UserId userId, Pageable pageable);
 

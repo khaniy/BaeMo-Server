@@ -11,7 +11,7 @@ import hotil.baemo.domains.chat.application.utils.ChatRoomUtils;
 import hotil.baemo.domains.chat.domain.value.room.ChatRoomId;
 import hotil.baemo.domains.chat.domain.value.room.ChatRoomUserStatus;
 import hotil.baemo.domains.chat.domain.value.user.UserId;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.QAbstractBaeMoUsersEntity;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.QUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class QueryChatMessageAdapter implements QueryChatMessageRepository {
 
-    private static final QAbstractBaeMoUsersEntity USER = QAbstractBaeMoUsersEntity.abstractBaeMoUsersEntity;
+    private static final QUserEntity USER = QUserEntity.userEntity;
     private static final QChatMessageEntity CHAT_MESSAGE = QChatMessageEntity.chatMessageEntity;
     private static final QChatRoomUserEntity CHAT_ROOM_USER = QChatRoomUserEntity.chatRoomUserEntity;
     private final JPAQueryFactory factory;

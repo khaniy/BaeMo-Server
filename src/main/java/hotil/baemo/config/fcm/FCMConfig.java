@@ -6,6 +6,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -14,9 +15,28 @@ import java.util.List;
 
 @Configuration
 public class FCMConfig {
+
     @Bean
-    FirebaseMessaging firebaseMessaging() throws IOException {
-        InputStream inputStream = new ClassPathResource("config/firebase/baemo-firebase-adminsdk.json").getInputStream();
+    @Profile("local")
+    FirebaseMessaging localFirebaseMessaging() throws IOException {
+        return firebaseMessaging("config/firebase/baemo-firebase-adminsdk-local.json");
+    }
+
+    @Bean
+    @Profile("dev")
+    FirebaseMessaging devFirebaseMessaging() throws IOException {
+        return firebaseMessaging("config/firebase/baemo-firebase-adminsdk-dev.json");
+    }
+
+    @Bean
+    @Profile("prod")
+    FirebaseMessaging prodFirebaseMessaging() throws IOException {
+        return firebaseMessaging("config/firebase/baemo-firebase-adminsdk-prod.json");
+    }
+
+
+    private FirebaseMessaging firebaseMessaging(String path) throws IOException {
+        InputStream inputStream = new ClassPathResource(path).getInputStream();
         GoogleCredentials googleCredentials = getGoogleCredentials(inputStream);
         FirebaseApp firebaseApp = getFirebaseApp(googleCredentials);
         return FirebaseMessaging.getInstance(firebaseApp);
@@ -41,6 +61,7 @@ public class FCMConfig {
     private FirebaseApp initializeFirebaseApp(GoogleCredentials googleCredentials) throws IOException {
         FirebaseOptions options = FirebaseOptions.builder()
             .setCredentials(googleCredentials)
+            .setProjectId("baemo-4e1d1")
             .build();
         return FirebaseApp.initializeApp(options);
     }

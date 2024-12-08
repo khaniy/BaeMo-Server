@@ -2,6 +2,10 @@ package hotil.baemo.domains.community.adapter.output.persistence.entity;
 
 
 import hotil.baemo.core.common.persistence.BaeMoBaseEntity;
+import hotil.baemo.domains.community.domain.value.image.CommunityImage;
+import hotil.baemo.domains.community.domain.value.image.CommunityImageDetails;
+import hotil.baemo.domains.community.domain.value.image.CommunityImageIsThumbnail;
+import hotil.baemo.domains.community.domain.value.image.CommunityImageOrderNumber;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +24,6 @@ public class CommunityImageEntity extends BaeMoBaseEntity {
     private Long communityId;
     private String image;
 
-    // TODO : flyway
     private Long orderNumber;
     private Boolean isThumbnail;
     private Boolean isDelete;
@@ -37,5 +40,25 @@ public class CommunityImageEntity extends BaeMoBaseEntity {
 
     public void delete() {
         this.isDelete = true;
+    }
+
+    public CommunityImage toCommunityImage() {
+        return new CommunityImage(this.image);
+    }
+
+    public CommunityImageOrderNumber toCommunityImageOrderNumber() {
+        return new CommunityImageOrderNumber(this.orderNumber);
+    }
+
+    public CommunityImageIsThumbnail toCommunityImageIsThumbnail() {
+        return new CommunityImageIsThumbnail(this.isThumbnail);
+    }
+
+    public CommunityImageDetails toCommunityImageDetails(){
+        return CommunityImageDetails.builder()
+            .communityImage(toCommunityImage())
+            .communityImageOrderNumber(toCommunityImageOrderNumber())
+            .communityImageThumbnail(toCommunityImageIsThumbnail())
+            .build();
     }
 }

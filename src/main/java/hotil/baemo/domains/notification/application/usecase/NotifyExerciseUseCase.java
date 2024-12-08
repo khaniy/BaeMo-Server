@@ -1,21 +1,46 @@
 package hotil.baemo.domains.notification.application.usecase;
 
+import hotil.baemo.domains.notification.domains.value.club.ClubId;
 import hotil.baemo.domains.notification.domains.value.exercise.*;
 import hotil.baemo.domains.notification.domains.value.user.UserId;
 
 public interface NotifyExerciseUseCase {
 
-    void notifyCreationToClubUsers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, ExerciseLocation exerciseLocation, ExerciseTime time, UserId createUserId);
+    void notifyCreationToClubMembers(ExerciseId exerciseId, ClubId clubId, ExerciseTitle exerciseTitle, ExerciseLocation exerciseLocation, ExerciseTime time, UserId createUserId);
 
-    void notifyDeletionToExerciseUsers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, UserId deleteUserId);
+    void notifyExpellationToMember(
+        ExerciseId exerciseId,
+        ClubId clubId,
+        ExerciseTitle exerciseTitle,
+        UserId expelledUserId
+    );
 
-    void notifyParticipationToExerciseUsers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, ExerciseUserStatus exerciseUserStatus, UserId participantUserId);
+    void notifyDeletionToMembers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, UserId deleteUserId);
 
-    void notifyApplyingToExerciseAdminUsers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, ExerciseType exerciseType, UserId applyUserId, UserId targetUserId);
+    void notifyApplyingToAdmin(ExerciseId exerciseId, ClubId clubId, ExerciseTitle exerciseTitle, ExerciseType exerciseType, UserId applyUserId, UserId targetUserId);
 
-    void notifyApprovalToExerciseUser(ExerciseId exerciseId, ExerciseTitle exerciseTitle, ExerciseUserStatus exerciseUserStatus, UserId approverUserId);
+    void notifyParticipationToAdmin(
+        ExerciseId exerciseId,
+        ClubId clubId,
+        ExerciseTitle exerciseTitle,
+        ExerciseUserStatus exerciseUserStatus,
+        UserId participantUserId
+    );
 
-    void notifyCancellationToExerciseAdminUsers(ExerciseId exerciseId, ExerciseTitle exerciseTitle, UserId cancelUserId);
+    void notifyApprovalToMember(
+        ExerciseId exerciseId,
+        ClubId clubId,
+        ExerciseTitle exerciseTitle,
+        ExerciseUserStatus exerciseUserStatus,
+        UserId approverUserId
+    );
 
-    void notifyExpellationToExerciseUser(ExerciseId exerciseId, ExerciseTitle exerciseTitle, UserId cancelUserId);
+    void notifyLeftToAdmin(
+        ExerciseId exerciseId,
+        ClubId clubId,
+        ExerciseTitle exerciseTitle,
+        UserId cancelUserId
+    );
+
+    void notifyApplyingToGuest(ExerciseId exerciseId, ClubId clubId, ExerciseTitle exerciseTitle, ExerciseType exerciseType, UserId applyUserId, UserId targetUserId);
 }

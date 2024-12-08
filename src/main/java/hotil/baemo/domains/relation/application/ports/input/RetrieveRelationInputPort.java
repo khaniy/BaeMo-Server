@@ -30,6 +30,10 @@ public class RetrieveRelationInputPort implements RetrieveFriendsUseCase {
     @Override
     public List<QRelationDTO.FindFriends> retrieveFriend(UserId userId, UserCode userCode) {
         return relationExternalOutPort.findFriend(userId, userCode);
+    }
+    @Override
+    public List<QRelationDTO.ApplyFriendsListView> retrieveApplyFriends(UserId userId){
+        return relationExternalOutPort.getApplyFriends(userId);
 
     }
 }

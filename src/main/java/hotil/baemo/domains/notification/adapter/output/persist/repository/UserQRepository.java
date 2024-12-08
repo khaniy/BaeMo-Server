@@ -3,7 +3,7 @@ package hotil.baemo.domains.notification.adapter.output.persist.repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import hotil.baemo.core.common.response.ResponseCode;
 import hotil.baemo.core.common.response.exception.CustomException;
-import hotil.baemo.domains.users.adapter.output.persistence.entity.QAbstractBaeMoUsersEntity;
+import hotil.baemo.domains.users.adapter.output.persistence.entity.QUserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserQRepository {
 
     private final JPAQueryFactory queryFactory;
-    private final QAbstractBaeMoUsersEntity USER = QAbstractBaeMoUsersEntity.abstractBaeMoUsersEntity;
+    private final QUserEntity USER = QUserEntity.userEntity;
 
 
     public String findUserName(Long userId) {

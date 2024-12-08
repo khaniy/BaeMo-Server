@@ -10,9 +10,11 @@ import hotil.baemo.domains.chat.domain.value.room.ChatRoomId;
 import hotil.baemo.domains.chat.domain.value.room.TargetId;
 import hotil.baemo.domains.chat.domain.value.user.UserId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ChatRoomInputPortRoom implements CreateChatRoomUseCase, DeleteChatRoomUseCase {
 	private final DMChatRoomOutPort DMChatRoomOutPort;
 	@Override

@@ -1,9 +1,8 @@
 package hotil.baemo.domains.exercise.application.ports.input.exercise.query;
 
 import hotil.baemo.domains.exercise.application.dto.QExerciseDTO;
-import hotil.baemo.domains.exercise.application.ports.output.RetrieveExerciseOutputPort;
+import hotil.baemo.domains.exercise.application.ports.output.exercise.RetrieveExerciseOutputPort;
 import hotil.baemo.domains.exercise.application.usecases.exercise.query.RetrieveAllExercisesUseCase;
-import hotil.baemo.domains.exercise.application.usecases.exercise.query.RetrieveMainPageExercisesUseCase;
 import hotil.baemo.domains.exercise.domain.value.user.UserId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
